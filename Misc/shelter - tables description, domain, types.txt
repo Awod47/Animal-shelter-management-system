@@ -1,0 +1,82 @@
+ANIMAL:
+an_id :  	TEXT , 	PRIMARY KEY,  (a0001 - a9999)
+an_name : TEXT,  	no domain
+an_age : 	INT, 	(0 - 100)
+breed : 	TEXT,	 no domain
+species : 	TEXT ,	 no domain
+details : 	TEXT , 	 gender, neutered or not, temper
+
+
+CUSTOMER:
+cust_id : 	TEXT , 	PRIMARY KEY,  (c0001 - c9999)
+cust_name : TEXT , 	no domain
+Phone :	 INT , 	(1000000000 - 9999999999)
+DOB : 	TEXT , 	(dd/mm./yyyy)
+address : 	TEXT , 	(building, street, city)
+
+
+FOSTER:
+an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
+cust_id : 	TEXT, 	FOREIGN KEY references CUSTOMER
+fost_date :	TEXT , 	(dd/mm./yyyy)
+due_date : TEXT, 	(dd/mm./yyyy)
+ 
+
+ADOPT:
+an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
+cust_id : 	TEXT, 	FOREIGN KEY references CUSTOMER
+ad_date : 	TEXT , 	(dd/mm./yyyy)
+PRIMARY KEY(an_id,  cust_id)
+
+
+INJURY:
+an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
+in_date  : 	TEXT, 	(dd/mm./yyyy)
+body_part : TEXT, 	no domain
+injury_status: TEXT, (cured/ not cured)
+
+
+DONATIONS:
+donor_id: 	TEXT, 	PRIMARY KEY (d0001 - d9999)
+resource: 	TEXT, 	(food/ money/ toys/ other)
+amount:	INT	(000000001 - 999999999)
+don_date: TEXT	(dd/mm./yyyy)
+availability: TEXT	(yes/no)
+
+
+SPENDING:
+an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
+donor_id: 	TEXT, 	PRIMARY KEY (d0001 - d9999)
+resource: 	TEXT, 	(food/ money/ toys/ other)
+amount: 	INT	(000000001 - 999999999)
+time:  	TEXT	(h : m : s)
+sp_date  : 	TEXT, 	(dd/mm./yyyy)
+
+
+VOLUNTEER:
+vol_id: 	TEXT,	PRIMARY KEY (v0001 - v9999)
+vol_name:	TEXT,	no domain
+DOB:	TEXT, 	(dd/mm/yyyy)
+vol_phone: INT,	(100000000 - 999999999)
+vol_address:TEXT,	(building, street, city)
+
+
+TAKES_CARE:
+vol_id: 	TEXT	FOREIGN KEY references VOLUNTEER
+an_id: 	TEXT	FOREIGN KEY references ANIMAL
+vol_date:	TEXT	(dd/mm/yyyy)
+tstart_time:TEXT	(h : m : s)
+tend_time:TEXT	(h : m : s)
+
+
+VOLUNTEER_TIMINGS:
+vol_id : 	TEXT	FOREIGN KEY references VOLUNTEER	
+date:	TEXT 	(dd/mm/yyyy)
+vstart_time:TEXT	(h : m : s)
+tend_time:TEXT	(h : m : s)	
+
+
+
+
+
+
