@@ -1,7 +1,7 @@
 import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
-from tkinter import messagebox, ttk
+#from tkinter import messagebox, ttk
 from Animal import *
 from Customer import *
 from Foster import *
@@ -12,8 +12,9 @@ from spending import *
 from volunteer import *
 from takes_care import *
 from volunteer_timings import *
+from sqlquerries import *
 
-try:
+'''try:
     con = sqlite3.connect("shelter.db")
     cur = con.cursor()
     print("connection successful")
@@ -35,7 +36,7 @@ def create_tables():
     con.commit()
     cur.close()
     con.close()
-
+'''
 create_tables()
 
 
