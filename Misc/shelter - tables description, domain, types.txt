@@ -34,6 +34,7 @@ an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
 in_date  : 	TEXT, 	(dd/mm./yyyy)
 body_part : TEXT, 	no domain
 injury_status: TEXT, (cured/ not cured)
+PRIMARY KEY(an_id, in_Date, body_part)
 
 
 DONATIONS:
@@ -46,7 +47,7 @@ availability: TEXT	(yes/no)
 
 SPENDING:
 an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
-donor_id: 	TEXT, 	PRIMARY KEY (d0001 - d9999)
+donor_id: 	TEXT, 	FOREIGN KEY (d0001 - d9999)
 amount: 	TEXT,	
 time:  	TEXT	(h : m : s)
 sp_date  : 	TEXT, 	(dd/mm./yyyy)
