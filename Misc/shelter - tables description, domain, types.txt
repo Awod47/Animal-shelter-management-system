@@ -49,7 +49,7 @@ SPENDING:
 an_id : 	TEXT, 	FOREIGN KEY references ANIMAL
 donor_id: 	TEXT, 	FOREIGN KEY (d0001 - d9999)
 amount: 	TEXT,	
-time:  	TEXT	(h : m : s)
+time:  	TEXT	(h : m )
 sp_date  : 	TEXT, 	(dd/mm./yyyy)
 
 
@@ -65,15 +65,15 @@ TAKES_CARE:
 vol_id: 	TEXT	FOREIGN KEY references VOLUNTEER
 an_id: 	TEXT	FOREIGN KEY references ANIMAL
 vol_date:	TEXT	(dd/mm/yyyy)
-tstart_time:TEXT	(h : m : s)
-tend_time:TEXT	(h : m : s)
+tstart_time:TEXT	(h : m )
+tend_time:TEXT	(h : m )
 
 
 VOLUNTEER_TIMINGS:
 vol_id : 	TEXT	FOREIGN KEY references VOLUNTEER	
 date:	TEXT 	(dd/mm/yyyy)
-vstart_time:TEXT	(h : m : s)
-vend_time:TEXT	(h : m : s)	
+vstart_time:TEXT	(h : m )
+vend_time:TEXT	(h : m )	
 
 PASSWORD:
 pass: Text
