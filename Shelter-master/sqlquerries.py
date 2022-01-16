@@ -391,7 +391,7 @@ def sqDeleteVolunteer_Timings(vttuple):
 # 43.
 # returns all records in Animal table
 def sqListAnimal():
-    cur.execute("SELECT * FROM ANIMALS;")
+    cur.execute("SELECT * FROM ANIMAL;")
     anlist=cur.fetchall()
     return anlist
 
@@ -449,14 +449,11 @@ def sqViewAnimal(an_id):
     cur.execute("SELECT * FROM TAKES_CARE WHERE AN_ID=?;",(an_id,))
     tclist=cur.fetchall()
     sumhrs=0
-    summin=0
     for i in tclist:
-        timehrs=int(i[4][0:2])-int(i[3][0:2])
+        timehrs=int(i[4][0:2])*60-int(i[3][0:2])*60 +int(i[4][3:5])-int(i[3][3:5])
         sumhrs=sumhrs+timehrs
-        timmin=int(i[4][3:5])-int(i[3][3:5])
-        summin=summin+timmin
-    sumhrs=sumhrs+summin/60
-    finallist=[antuple,adtuple,fostlist,injlist,splist,tclist,sumhrs]
+    sumhrs=sumhrs/60
+    finallist=[antuple,adtuple,fostlist,injlist,splist,tclist,int(sumhrs)]
     return finallist
 
 # 48.
@@ -498,13 +495,13 @@ def sqViewVolunteer(vol_id):
     cur.execute("SELECT * FROM TAKES_CARE WHERE VOL_ID=?;",(vol_id,))
     tclist=cur.fetchall()
     totalhr=0
-    summin=0
+    #summin=0
     for i in vtlist:
-        timehr=int(i[3][0:2])-int(i[2][0:2])
-        timmin=int(i[3][3:5])-int(i[2][3:5])
+        timehr=int(i[3][0:2])*60+int(i[3][3:5])-int(i[2][0:2])*60-int(i[2][3:5])
+        #timehr=int(i[3][0:2])-int(i[2][0:2])
+        #timmin=int(i[3][3:5])-int(i[2][3:5])
         totalhr=totalhr+timehr
-        summin=summin+timmin
-    totalhr=totalhr+summin/60
+    totalhr=totalhr/60
     cur.execute("SELECT DISTINCT an_id from TAKES_CARE WHERE VOL_ID=?;",(vol_id,))
     anlist=cur.fetchall()
     anidlist=list()
@@ -519,14 +516,14 @@ def sqViewVolunteer(vol_id):
         summin=0
         for j in tclist:
             if j[1]==i[0] :
-                timehr=int(j[4][0:2])-int(j[3][0:2])
-                timmin=int(j[4][3:5])-int(j[3][3:5])
+                timehr=int(j[4][0:2])*60-int(j[3][0:2])*60 + int(j[4][3:5])-int(j[3][3:5])
+                #timmin=int(j[4][3:5])-int(j[3][3:5])
                 sumhr=sumhr+timehr
-                summin=summin+timmin
-        sumhr=sumhr+timmin/60
-        itctuple=(i[0],i[1],sumhr)
+                #summin=summin+timmin
+        sumhr=sumhr/60
+        itctuple=(i[0],i[1],int(sumhr))
         finalindlist.append(itctuple)
-    finallist=[voltuple,vtlist,tclist,totalhr,finalindlist]
+    finallist=[voltuple,vtlist,tclist,int(totalhr),finalindlist]
     return finallist
 
 # 50.
