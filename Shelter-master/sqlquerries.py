@@ -383,6 +383,167 @@ def sqDeleteVolunteer_Timings(vttuple):
     cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",vttuple)
     con.commit()
 
+# 43. 44. 45. 46.
+# the following fetchs all records from a particular table
+# parameter: none
+# returntyple: list= list of tuples containing all records
+
+# 43.
+# returns all records in Animal table
+def sqListAnimal():
+    cur.execute("SELECT * FROM ANIMALS;")
+    anlist=cur.fetchall()
+    return anlist
+
+# 44.
+# returns all records in Customer table
+def sqListCustomer():
+    cur.execute("SELECT * FROM CUSTOMER;")
+    custlist=cur.fetchall()
+    return custlist
+
+# 45.
+# returns all records in Volunteer table
+def sqListVolunteer():
+    cur.execute("SELECT * FROM VOLUNTEER;")
+    vollist=cur.fetchall()
+    return vollist
+
+# 46.
+# returns all records in Donations table
+def sqListDonations():
+    cur.execute("SELECT * FROM DONATIONS;")
+    donlist=cur.fetchall()
+    return donlist
+
+# 47.
+# this function fetches all information related to an animal(an_id)
+# this function gives: animal details, adoption detail, list of fostering, list of injury,list of spending, list of takescare
+# and the total time it was cared for
+# parameter: str=animal id
+# return type: list = [0:tuple=animalinfo, 
+#                      1:tuple=adoptioninfo, 
+#                      2:list=[(foster1),(foster2)...], list of tuples
+#                      3:list=[(injury1),(injury2)...], list of tuples
+#                      4:list=[(spending1),(spending2)..], list of tuples
+#                      5:list=[(takescare1),(takescare2)...], list of tuples
+#                      6:int=total time taken care of
+#                     ]
+# Examples: to print list of injuries of animal a0101
+#           >>>L1=sqViewAnimal("a0101")
+#           >>>print(L1[3])
+#           to print total time animal a2000 was taken care of
+#           >>>L1=sqViewAnimal("a2000")
+#           >>>print(L1[6])
+def sqViewAnimal(an_id):
+    cur.execute("SELECT * FROM ANIMAL WHERE AN_ID=?;",(an_id,))
+    antuple=cur.fetchone()
+    cur.execute("SELECT * FROM ADOPT WHERE AN_ID=?;",(an_id,))
+    adtuple=cur.fetchone()
+    cur.execute("SELECT * FROM FOSTER WHERE AN_ID=?",(an_id,))
+    fostlist=cur.fetchall()
+    cur.execute("SELECT * FROM INJURY WHERE AN_ID=?",(an_id,))
+    injlist=cur.fetchall()
+    cur.execute("SELECT * FROM SPENDING WHERE AN_ID=?;",(an_id,))
+    splist=cur.fetchall()
+    cur.execute("SELECT * FROM TAKES_CARE WHERE AN_ID=?;",(an_id,))
+    tclist=cur.fetchall()
+    sumhrs=0
+    summin=0
+    for i in tclist:
+        timehrs=int(i[4][0:2])-int(i[3][0:2])
+        sumhrs=sumhrs+timehrs
+        timmin=int(i[4][3:5])-int(i[3][3:5])
+        summin=summin+timmin
+    sumhrs=sumhrs+summin/60
+    finallist=[antuple,adtuple,fostlist,injlist,splist,tclist,sumhrs]
+    return finallist
+
+# 48.
+# this function fetches all information related to a customer
+# this function gives: customerdetails, list of customer adoptions, list of fosters
+# parameter: str=customer id
+# return type: list=[0:tuple=customer details
+#                    1:list=[(adopt1),(adopt2)...] list of tuples
+#                    2:list=[(foster1),(foster2)...] list of tuples
+#                   ]
+def sqViewCustomer(cust_id):
+    cur.execute("SELECT * FROM CUSTOMER WHERE CUST_ID=?;",(cust_id,))
+    custtuple=cur.fetchone()
+    cur.execute("SELECT * FROM ADOPT WHERE CUST_ID=?;",(cust_id,))
+    adlist=cur.fetchall()
+    cur.execute("SELECT * FROM FOSTER WHERE CUST_ID=?;",(cust_id,))
+    fostlist=cur.fetchall()
+    finallist=[custtuple,adlist,fostlist]
+    return finallist
+
+# 49.
+# this functin fetches all information related to a volunteer
+# this function gives: volunteer details, list of vtimings, list of takes_Care, 
+#                      total time volunteered, total time taken care for each animal
+# parameter: str=volunteer id
+# return typle: List=[0: tuple=volunteerdetails
+#                     1: list=[(vtimings1),(vtimings2),...] list of tuples
+#                     2: list=[(takes_Care1),(takes_Care2),....] list of tuples
+#                     3: int=total hrs volunteered
+#                     4: list=[(an_id,hrs),(an_id,hrs),("a2001",31)....]
+#                        4:this is a list of tuples, each tuple represents the 
+#                        total hours spent on that particular an_id 
+#                    ] 
+def sqViewVolunteer(vol_id):
+    cur.execute("SELECT * FROM VOLUNTEER WHERE VOL_ID=?;",(vol_id,))
+    voltuple=cur.fetchone()
+    cur.execute("SELECT * FROM VOLUNTEER_TIMINGS WHERE VOL_ID=?;",(vol_id,))
+    vtlist=cur.fetchall()
+    cur.execute("SELECT * FROM TAKES_CARE WHERE VOL_ID=?;",(vol_id,))
+    tclist=cur.fetchall()
+    totalhr=0
+    summin=0
+    for i in vtlist:
+        timehr=int(i[3][0:2])-int(i[2][0:2])
+        timmin=int(i[3][3:5])-int(i[2][3:5])
+        totalhr=totalhr+timehr
+        summin=summin+timmin
+    totalhr=totalhr+summin/60
+    cur.execute("SELECT DISTINCT an_id from TAKES_CARE WHERE VOL_ID=?;",(vol_id,))
+    anlist=cur.fetchall()
+    anidlist=list()
+    for i in anlist:
+        cur.execute("SELECT AN_NAME FROM ANIMAL WHERE an_id=?;",(i[0],))
+        anname=cur.fetchone()
+        newtuple=(i[0],anname[0])
+        anidlist.append(newtuple)
+    finalindlist=list()
+    for i in anidlist:
+        sumhr=0
+        summin=0
+        for j in tclist:
+            if j[1]==i[0] :
+                timehr=int(j[4][0:2])-int(j[3][0:2])
+                timmin=int(j[4][3:5])-int(j[3][3:5])
+                sumhr=sumhr+timehr
+                summin=summin+timmin
+        sumhr=sumhr+timmin/60
+        itctuple=(i[0],i[1],sumhr)
+        finalindlist.append(itctuple)
+    finallist=[voltuple,vtlist,tclist,totalhr,finalindlist]
+    return finallist
+
+# 50.
+# this function fetches all information related to a particular donation
+# this function retrieves: donation info, list of spending on that dono
+# parameter: str=donoation id
+# return type: list=[0:tuple=donation details
+#                    1:list=[(spending1),(spending2)...] list of tuples
+#                   ]
+def sqViewDonations(donor_id):
+    cur.execute("SELECT * FROM DONATIONS WHERE DONOR_ID=?;",(donor_id,))
+    donotuple=cur.fetchone()
+    cur.execute("SELECT * FROM SPENDING WHERE DONOR_ID=?;",(donor_id,))
+    splist=cur.fetchall()
+    finallist=[donotuple,splist]
+    return finallist
+
 # 51. 52. functions which creates all the nescessary tables and handles password
 # sqCreateTables() Creates the nescessary tables if it doesnt exists
 # if the tables exist then nothing is changed
