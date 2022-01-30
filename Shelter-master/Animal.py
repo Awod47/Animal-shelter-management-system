@@ -2,6 +2,11 @@ import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
 from tkinter import messagebox, ttk
+from Adopt import *
+from Injury import *
+from Foster import *
+from spending import *
+
 
 
 def openAnimal():
@@ -9,6 +14,7 @@ def openAnimal():
     root_an.title("Animal")
     root_an.minsize(width=400,height=400)
     root_an.geometry("1920x1800")
+
 
     def resize_image(event):
         new_width = event.width
@@ -40,8 +46,22 @@ def openAnimal():
     btn3 = Button(root_an,text="View Animals",bg='black', fg='white', command=viewAnimal)
     btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
 
-    btn4 = Button(root_an,text="Search animal",bg='black', fg='white', command=searchAnimal)
-    btn4.place(relx=0.52,rely=0.5, relwidth=0.25,relheight=0.05)
+
+    btn5 = Button(root_an,text="Add Injury",bg='black', fg='white', command=registerAnimal)
+    btn5.place(relx=0.05,rely=0.05, relwidth=0.25,relheight=0.05)
+
+    btn6 = Button(root_an,text="Report Spending",bg='black', fg='white', command=registerSpending)
+    btn6.place(relx=0.70,rely=0.05, relwidth=0.25,relheight=0.05)
+
+    btn7 = Button(root_an,text="Issue Foster",bg='black', fg='white', command=IssueFoster)
+    btn7.place(relx=0.05,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    btn8 = Button(root_an,text="Issue Adopt",bg='black', fg='white', command=IssueAdoption)
+    btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    btn9 = Button(root_an,text="return Animal",bg='black', fg='white', command=ReturnAnimal)
+    btn9.place(relx=0.05,rely=0.78, relwidth=0.25,relheight=0.05)
+
     root_an.mainloop()
 
 
@@ -54,7 +74,7 @@ def registerAnimal():
         print("error during connection: "+str(e))
     
     root = Tk()
-    root.title("Library")
+    root.title("Animal")
     root.minsize(width=400,height=400)
     root.geometry("900x700")
 
@@ -66,7 +86,7 @@ def registerAnimal():
         
     headingFrame1 = Frame(root,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.25,rely=0.1,relwidth=0.5,relheight=0.13)
-    headingLabel = Label(headingFrame1, text="Add Books", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Add Animal", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
     labelFrame = Frame(root,bg='black')
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
@@ -107,28 +127,56 @@ def registerAnimal():
     species.place(relx=0.3,rely=0.6, relwidth=0.62, relheight=0.08)
 
     # Animal details
-    lb4 = Label(labelFrame,text="Status(neutured/aggression) : ", bg='black', fg='white')
+    lb4 = Label(labelFrame,text="Status(avail/IFC/Adopted) : ", bg='black', fg='white')
     lb4.place(relx=0.05,rely=0.7, relheight=0.08)
         
     details = Entry(labelFrame)
     details.place(relx=0.3,rely=0.7, relwidth=0.62, relheight=0.08)
     
 
+    def sqInsertAnimal(aname,aage,breed,species,details):
+        cur.execute("SELECT an_id from Animal")
+        anidlist=cur.fetchall()
+        idlist=list()
+        for i in anidlist :
+            num=int(i[0][1:])
+            idlist.append(num)
+        for newid in range(1,9999) :
+            if newid in idlist :
+                continue
+            else :
+                break
+        if newid<10 :
+            newidstr = "a000" + str(newid)
+        elif newid<100 :
+            newidstr = "a00" + str(newid)
+        elif newid<1000 :
+            newidstr = "a0" + str(newid)
+        else :
+            newidstr = "a" +str(newid)
+        cur.execute("INSERT INTO ANIMAL VALUES(?,?,?,?,?,?);",(newidstr,aname,aage,breed,species,details))
+        con.commit()
+        return newidstr
+
+
     def AddAnimal():
-        animal_id = an_id.get()
+        #animal_id = an_id.get()
         animal_name = an_name.get()
         animal_age = an_age.get()
         animal_breed = breed.get()
         animal_species = species.get()
         animal_details = details.get()
 
-        insertAnimal = "insert into "+AnimalTable +" values('"+animal_id+"', '"+animal_name+"', '"+animal_age+"' , '"+animal_breed+"', '"+animal_species+"' , '"+animal_details+"');"
+        
+        #insertAnimal = "insert into "+AnimalTable +" values('"+animal_id+"', '"+animal_name+"', '"+animal_age+"' , '"+animal_breed+"', '"+animal_species+"' , '"+animal_details+"');"
         try:
-            cur.execute(insertAnimal)
-            con.commit()
+            #cur.execute(insertAnimal)
+            #con.commit()
+            animal_id=sqInsertAnimal(animal_name,animal_age,animal_breed,animal_species,animal_details)
             messagebox.showinfo('Success', "animal added")
         except:
             messagebox.showerror('Error', "Something went wrong")
+
         
         print(animal_id)
         print(animal_name)
@@ -160,7 +208,7 @@ def removeAnimal():
         print("error during connection: "+str(e))
 
     root = Tk()
-    root.title("Library")
+    root.title("Animal")
     root.minsize(width=400,height=400)
     root.geometry("900x700")
 
@@ -186,14 +234,17 @@ def removeAnimal():
     an_id = Entry(labelFrame)
     an_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
 
+    def sqDeleteAnimal(aid):
+        cur.execute("DELETE FROM SPENDING WHERE DONOR_ID IS NULL AND AN_ID=?;",(aid,))
+        cur.execute("DELETE FROM TAKES_CARE WHERE VOL_ID IS NULL AND AN_ID=?;",(aid,))
+        cur.execute("DELETE FROM ANIMAL WHERE AN_ID=?;",(aid,))
+        con.commit()
 
     def deleteAnimal():
         animal_id = an_id.get()
-        removeCommand = 'delete from ' +AnimalTable+ " where an_id = '"+animal_id+"'"
 
         try:
-            cur.execute(removeCommand)
-            con.commit()
+            sqDeleteAnimal(animal_id)
             messagebox.showinfo("Success", "Animal record deleted")
         except:
             messagebox.showerror("Error", "something went wrong")
@@ -215,11 +266,379 @@ def removeAnimal():
 
 
 def viewAnimal():
-    pass
+
+    try:
+        con = sqlite3.connect("shelter.db")
+        cur = con.cursor()
+    except Exception as e:
+        print("error during connection: "+str(e))
 
 
-def searchAnimal():
-    pass
+    root_new = Toplevel()
+    root_new.title("Animal")
+    root_new.minsize(width=400,height=400)
+    root_new.geometry("1920x1800")
+    root_new.configure(bg="#222222")
+
+    def lookup_records():
+
+        search = Toplevel(root_new)
+        search.title("Lookup Records")
+        search.geometry("400x200")
+
+        # Create label frame
+        search_frame = LabelFrame(search, text="Key")
+        search_frame.pack(padx=10, pady=10)
+
+        # Add entry box
+        search_entry = Entry(search_frame, font=("Helvetica", 18))
+        search_entry.pack(pady=20, padx=20)
+
+        def sqSearchAnimal(key):
+            cur.execute("SELECT * FROM ANIMAL WHERE an_id like ? or an_name like ? or an_age like ? or breed like ? or species like ? or details like ?;",(key,key,key,key,key,key))
+            anlist=cur.fetchall()
+            return anlist
+
+
+        def search_records():
+            lookup_record = search_entry.get()
+            search.destroy()
+            
+            for record in tree.get_children():
+                tree.delete(record)
+            
+            try:
+                con = sqlite3.connect("shelter.db")
+                cur = con.cursor()
+            except Exception as e:
+                print("error during connection: "+str(e))
+
+            records = sqSearchAnimal(lookup_record)
+            
+            i=0
+            for r in records:
+                tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4], r[5]))
+                i+= 1
+                
+        # Add button
+        search_button = Button(search, text="Search Records", command=search_records)
+        search_button.pack(padx=20, pady=20)
+
+
+    records = cur.execute("SELECT * FROM animal")
+    
+    tree = ttk.Treeview(root_new)
+    tree["columns"]=("an_id", "an_name", "an_age", "breed", "species", "details")
+    tree['show'] =  'headings'
+
+    my_menu = Menu(root_new)
+    root_new.config(menu=my_menu)
+
+    search_menu = Menu(my_menu, tearoff=0)
+    my_menu.add_cascade(label="Search", menu=search_menu)
+    # Drop down menu
+    search_menu.add_command(label="Search", command=lookup_records)
+
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", background="white", foreground="white", fieldbackground = "white")
+    style.configure('Treeview', rowheight=40)
+    style.configure('Treeview', columnwidth=70)
+    style.configure("Treeview.Heading", font=(None, 20))
+    style.map("Treeview", background = [('selected', 'orange')])
+
+
+    tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
+    tree.column("an_name", width=200, minwidth=50, anchor=CENTER)
+    tree.column("an_age", width=150, minwidth=50, anchor=CENTER)
+    tree.column("breed", width=250, minwidth=50, anchor=CENTER)
+    tree.column("species", width=200, minwidth=50, anchor=CENTER)
+    tree.column("details", width=200, minwidth=50, anchor=CENTER)
+
+    tree.heading("an_id", text="Animal Id", anchor=CENTER)
+    tree.heading("an_name", text="Name", anchor=CENTER)
+    tree.heading("an_age", text="Age", anchor=CENTER)
+    tree.heading("breed", text="Breed", anchor=CENTER)
+    tree.heading("species", text="Species", anchor=CENTER)
+    tree.heading("details", text="Status", anchor=CENTER)
+
+    i=0
+    for r in records:
+        tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4], r[5]))
+        i+= 1
+
+    tree.pack(pady=30)
+    tree['show'] =  'headings'
+
+    add_frame = LabelFrame(root_new, bg="black" )
+    add_frame.pack(fill= "x", expand = "yes", padx = 20)
+
+    #Labels
+
+    lb2 = Label(add_frame, text="Name")
+    lb2.grid(row=0, column=0,  padx=125, pady=10)
+
+    lb3 = Label(add_frame, text="Age")
+    lb3.grid(row=0, column=1, padx=125, pady=10)
+
+    lb4 = Label(add_frame, text="Breed")
+    lb4.grid(row=0, column=2, padx=125, pady=10)
+
+    lb5 = Label(add_frame, text="Species")
+    lb5.grid(row=0, column=3, padx=125, pady=10)
+
+    lb6 = Label(add_frame, text="Status")
+    lb6.grid(row=0, column=4, padx=125, pady=10)
+
+    #Entry boxes
+
+    an_name = Entry(add_frame)
+    an_name.grid(row=1, column=0)
+
+    an_age = Entry(add_frame)
+    an_age.grid(row=1, column=1)
+
+    breed = Entry(add_frame)
+    breed.grid(row=1, column=2)
+
+    species = Entry(add_frame)
+    species.grid(row=1, column=3)
+
+    details = Entry(add_frame)
+    details.grid(row=1, column=4)
+
+
+    def add_record():
+
+        try:
+            con = sqlite3.connect("shelter.db")
+            cur = con.cursor()
+        except Exception as e:
+            print("error during connection: "+str(e))
+
+        def sqInsertAnimal(aname,aage,breed,species,details):
+            cur.execute("SELECT an_id from Animal")
+            anidlist=cur.fetchall()
+            idlist=list()
+            for i in anidlist :
+                num=int(i[0][1:])
+                idlist.append(num)
+            for newid in range(1,9999) :
+                if newid in idlist :
+                    continue
+                else :
+                    break
+            if newid<10 :
+                newidstr = "a000" + str(newid)
+            elif newid<100 :
+                newidstr = "a00" + str(newid)
+            elif newid<1000 :
+                newidstr = "a0" + str(newid)
+            else :
+                newidstr = "a" +str(newid)
+            cur.execute("INSERT INTO ANIMAL VALUES(?,?,?,?,?,?);",(newidstr,aname,aage,breed,species,details))
+            con.commit()
+            return newidstr
+
+        try:
+            animal_id = sqInsertAnimal(an_name.get(), an_age.get(), breed.get(), species.get(), details.get())
+            tree.insert(parent='', index='end', text="", values=(animal_id, an_name.get(), an_age.get(), breed.get(), species.get(), details.get()))
+           
+            # Clear the boxes
+            an_name.delete(0, END)
+            an_age.delete(0, END)
+            breed.delete(0, END)
+            species.delete(0, END)
+            details.delete(0, END)
+
+        except:
+            messagebox.showerror("Error","Something went wrong", parent= root_new)
 
 
 
+    def remove_record():
+        
+        def sqDeleteAnimal(aid):
+            cur.execute("DELETE FROM SPENDING WHERE DONOR_ID IS NULL AND AN_ID=?;",(aid,))
+            cur.execute("DELETE FROM TAKES_CARE WHERE VOL_ID IS NULL AND AN_ID=?;",(aid,))
+            cur.execute("DELETE FROM ANIMAL WHERE AN_ID=?;",(aid,))
+            con.commit()
+
+        selected = tree.focus()
+        values = tree.item(selected, 'values')
+        sqDeleteAnimal(values[0])
+
+        x = tree.selection()
+        tree.delete(x)
+
+
+    def edit_record():
+        an_name.delete(0, END)
+        an_age.delete(0, END)
+        breed.delete(0, END)
+        species.delete(0, END)
+        details.delete(0, END)
+
+        # Grab record number
+        selected = tree.focus()
+        # Grab record values
+        values = tree.item(selected, 'values')
+
+        #temp_label.config(text=values[0])
+
+        # output to entry boxes
+        an_name.insert(0, values[1])
+        an_age.insert(0, values[2])
+        breed.insert(0, values[3])
+        species.insert(0, values[4])
+        details.insert(0, values[5])
+
+    
+    def update_record():
+
+        def sqModifyAnimal(atuple):
+            cur.execute("UPDATE ANIMAL SET AN_NAME=?,AN_AGE=?,BREED=?,SPECIES=?,DETAILS=? WHERE AN_ID=?;",(atuple[1],atuple[2],atuple[3],atuple[4],atuple[5],atuple[0]))
+            con.commit()
+
+        # Grab record number
+        selected = tree.focus()
+        # Grab record values
+        values = tree.item(selected, 'values')
+        
+        try:
+            tree.item(selected, text="", values=(values[0],an_name.get(), an_age.get(), breed.get(), species.get(), details.get()))
+            values = tree.item(selected, 'values')
+            sqModifyAnimal(values)
+
+            # Clear entry boxes
+            an_name.delete(0, END)
+            an_age.delete(0, END)
+            breed.delete(0, END)
+            species.delete(0, END)
+            details.delete(0, END)
+
+        except:
+            messagebox.showerror("Error", "Something went wrong", parent=root_new)
+
+        
+    button_frame = LabelFrame(root_new, bg = "orange", text = "Commands")
+    button_frame.pack(fill= "x", expand = "yes", padx = 20)
+
+    #add new record
+    add_button = Button(button_frame, text="Add Record", command=add_record)
+    add_button.grid(row=0, column=0, padx=145, pady=10)
+
+    #select record to edit
+    edit_button = Button(button_frame, text="Edit Record", command=edit_record)
+    edit_button.grid(row=0, column=1, padx=145, pady=10)
+
+    #update selected
+    update_button = Button(button_frame, text="Save Record", command=update_record)
+    update_button.grid(row=0, column=2, padx=145, pady=10)
+
+    # Remove Selected
+    remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
+    remove_one.grid(row=0, column=3, padx=145, pady=10)
+
+    root_new.mainloop()
+    
+   
+
+
+def ReturnAnimal():
+
+    try:
+        con = sqlite3.connect("shelter.db")
+        cur = con.cursor()
+    except Exception as e:
+        print("error during connection: "+str(e))
+
+    root = Tk()
+    root.title("Returning Animal")
+    root.minsize(width=400,height=400)
+    root.geometry("600x500")
+    
+    FosterTable = "foster"
+    AnimalTable = "animal"
+
+    Canvas1 = Canvas(root)
+    Canvas1.config(bg="#006B38")
+    Canvas1.pack(expand=True,fill=BOTH)
+        
+    headingFrame1 = Frame(root,bg="#FFBB00",bd=5)
+    headingFrame1.place(relx=0.25,rely=0.1,relwidth=0.5,relheight=0.13)
+        
+    headingLabel = Label(headingFrame1, text="Return Animal", bg='black', fg='white', font=('Courier',15))
+    headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
+    
+    labelFrame = Frame(root,bg='black')
+    labelFrame.place(relx=0.1,rely=0.3,relwidth=0.8,relheight=0.5)   
+        
+    # Book ID to Delete
+    lb1 = Label(labelFrame,text="Animal ID : ", bg='black', fg='white')
+    lb1.place(relx=0.05,rely=0.5)
+        
+    an_id = Entry(labelFrame)
+    an_id.place(relx=0.3,rely=0.5, relwidth=0.62)
+    
+    def returnn():
+        animal_id = an_id.get()
+        extract_An_id = "select an_id from "+FosterTable
+        all_An_id = []
+
+        try:
+            cur.execute(extract_An_id)
+            con.commit()
+            for i in cur:
+                all_An_id.append(i[0])
+            
+            if animal_id in all_An_id:
+                checkAvail = "select details from "+AnimalTable+" where an_id = '"+animal_id+"'"
+                cur.execute(checkAvail)
+                con.commit()
+                for i in cur:
+                    check = i[0]
+                    
+                if check == 'IFC':
+                    status = True
+                else:
+                    status = False
+            else:
+                messagebox.showinfo("Error","Animal ID not present")
+        except:
+            messagebox.showinfo("Error","Can't fetch Animal IDs")
+        
+        
+        # removeFoster = "delete from "+FosterTable+" where an_id = '"+animal_id+"'"
+        
+        print(animal_id in all_An_id)
+        print(status)
+
+        updateAnimalDetails = "update "+AnimalTable+" set details = 'avail' where an_id = '"+animal_id+"'"
+        try:
+            if animal_id in all_An_id and status == True:
+                # cur.execute(removeFoster)
+                # con.commit()
+                cur.execute(updateAnimalDetails)
+                con.commit()
+                messagebox.showinfo('Success',"Animal Returned Successfully")
+            else:
+                all_An_id.clear()
+                messagebox.showinfo('Message',"Please check the Animal ID")
+                root.destroy()
+                return
+        except:
+            messagebox.showinfo("Search Error","The value entered is wrong, Try again")
+        
+        all_An_id.clear()
+        root.destroy()
+
+
+    #Submit Button
+    SubmitBtn = Button(root,text="Return",bg='#d1ccc0', fg='black',command=returnn)
+    SubmitBtn.place(relx=0.28,rely=0.9, relwidth=0.18,relheight=0.08)
+    
+    quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
+    quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+    
+    root.mainloop()
