@@ -1,3 +1,4 @@
+from operator import ge
 import sqlite3
 from tkinter import *
 from tkinter import font
@@ -57,7 +58,7 @@ def MainPage():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('pups2.jfif')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root, image = photo)
@@ -117,8 +118,6 @@ def sqSetPassword(psw):
         cur1.execute("INSERT INTO Password VALUES(?); ",(psw,))
         con1.commit()  
 
-sqSetPassword('password1')
-
 
 def Authenticate():
     #to authenticate username and password
@@ -129,7 +128,7 @@ def Authenticate():
         
     password_entered = pass_word.get()
     password_saved = sqGetPassword()
-    if password_entered == "":
+    if password_entered == password_saved:
         root_login.destroy()
         MainPage()
     elif password_entered == '':
@@ -138,6 +137,87 @@ def Authenticate():
         messagebox.showerror("Error", "invalid password, try again", parent=root_login)
 
 
+def newPass():
+    root_chpass = Tk()
+    root_chpass.title("Change password")
+    root_chpass.minsize(width=400,height=400)
+    root_chpass.geometry("800x500")
+
+    Canvas1 = Canvas(root_chpass)
+        
+    Canvas1.config(bg="#222222")
+    Canvas1.pack(expand=True,fill=BOTH) 
+
+    headingFrame1 = Frame(root_chpass,bg="#FFBB00",bd=5)
+    headingFrame1.place(relx=0.25,rely=0.1,relwidth=0.5,relheight=0.13)
+    headingLabel = Label(headingFrame1, text="Password change", bg='black', fg='white', font=('Courier',15))
+    headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
+    labelFrame = Frame(root_chpass,bg='black')
+    labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
+        
+    # lb1 = Label(labelFrame,text="Enter new password:", bg='black', fg='white')
+    # lb1.place(relx=0.29,rely=0.15, relheight=0.12)
+
+    # lb1.config(font=('Times New Roman',16))
+        
+    # user_name = Entry(labelFrame)
+    # user_name.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.12)
+
+    #old password    
+    lb1 = Label(labelFrame,text="Old Password : ", bg='black', fg='white')
+    lb1.place(relx=0.05,rely=0.35, relheight=0.12)
+        
+    old_pass_word = Entry(labelFrame)
+    old_pass_word.place(relx=0.3,rely=0.35, relwidth=0.62, relheight=0.12)
+
+    # Password
+    lb2 = Label(labelFrame,text="New Password : ", bg='black', fg='white')
+    lb2.place(relx=0.05,rely=0.48, relheight=0.12)
+        
+    pass_word = Entry(labelFrame)
+    pass_word.place(relx=0.3,rely=0.48, relwidth=0.62, relheight=0.12)
+
+    #confirm password
+    lb3 = Label(labelFrame,text="Confirm Password : ", bg='black', fg='white')
+    lb3.place(relx=0.05,rely=0.61, relheight=0.12)
+        
+    confirm = Entry(labelFrame)
+    confirm.place(relx=0.3,rely=0.61, relwidth=0.62, relheight=0.12)
+
+    def changePass():
+        def sqGetPassword():
+            cur1.execute("SELECT * FROM PASSWORD")
+            L=cur1.fetchall()
+            return L[0][0] 
+
+        saved_pass = sqGetPassword()
+        new_pass = pass_word.get()
+        confirm_pass = confirm.get()
+        oldPass = old_pass_word.get()
+
+        try:
+            if oldPass == saved_pass and new_pass == confirm_pass:
+                cur1.execute("DELETE FROM PASSWORD WHERE PASS=?;",(oldPass,))
+                sqSetPassword(new_pass)
+                messagebox.showinfo("Success", "Password updated", parent = root_login)
+                root_chpass.destroy()
+            
+            else:
+                messagebox.showerror("Error", "Old password is incorrect or the new passwords do not match", parent = root_chpass)
+
+        except:
+            messagebox.showerror("Error", "Something went wrong", parent = root_chpass)
+
+            
+        
+    # Submit Button
+    SubmitBtn = Button(root_chpass,text="SUBMIT",bg='#d1ccc0', fg='black',command=changePass)
+    SubmitBtn.place(relx=0.28,rely=0.9, relwidth=0.18,relheight=0.06)
+
+    # Quit button
+    quitBtn = Button(root_chpass,text="Quit",bg='#f7f1e3', fg='black',command=root_chpass.destroy)
+    quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.06)
+    root_login.mainloop()
 
 # login form
 root_login = Tk()
@@ -157,14 +237,12 @@ headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 labelFrame = Frame(root_login,bg='black')
 labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
     
-# # Username
-lb1 = Label(labelFrame,text="Enter registered Password for ABC shelter:", bg='black', fg='white')
-lb1.place(relx=0.22,rely=0.15, relheight=0.12)
 
-lb1.config(font=('Times New Roman',16))
+# lb1 = Label(labelFrame,text="Enter registered Password for ABC shelter:", bg='black', fg='white')
+# lb1.place(relx=0.22,rely=0.15, relheight=0.12)
+
+# lb1.config(font=('Times New Roman',16))
     
-# user_name = Entry(labelFrame)
-# user_name.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.12)
     
 # Password
 lb1 = Label(labelFrame,text="Password : ", bg='black', fg='white')
@@ -174,13 +252,17 @@ pass_word = Entry(labelFrame, show='*')
 pass_word.place(relx=0.2,rely=0.35, relwidth=0.62, relheight=0.12)
     
 # Submit Button
-SubmitBtn = Button(root_login,text="SUBMIT",bg='#d1ccc0', fg='black',command=Authenticate)
-SubmitBtn.place(relx=0.28,rely=0.9, relwidth=0.18,relheight=0.08)
+SubmitBtn = Button(root_login,text="Submit",bg='#d1ccc0', fg='black',command=Authenticate)
+SubmitBtn.place(relx=0.18,rely=0.84, relwidth=0.18,relheight=0.06)
 
 # Quit button
 quitBtn = Button(root_login,text="Quit",bg='#f7f1e3', fg='black',command=root_login.destroy)
-quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
-root_login.mainloop()
+quitBtn.place(relx=0.63,rely=0.84, relwidth=0.18,relheight=0.06)
 
+#change password button
+chPassBtn = Button(root_login,text="Change password",bg='#f7f1e3', fg='black',command=newPass)
+chPassBtn.place(relx=0.40,rely=0.84, relwidth=0.18,relheight=0.06)
+
+root_login.mainloop()
 
 

@@ -29,7 +29,7 @@ def openVolunteer():
     # heading label
     headingFrame1 = Frame(root_vol,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.2,rely=0.1,relwidth=0.6,relheight=0.16)
-    headingLabel = Label(headingFrame1, text="Volunteer data", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Volunteer Menu", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
     #buttons for different tables
@@ -348,7 +348,7 @@ def viewVolunteers():
     tree.column("vol_address", width=350, minwidth=50, anchor=CENTER)
     
 
-    tree.heading("vol_id", text="Customer Id", anchor=CENTER)
+    tree.heading("vol_id", text="Volunteer Id", anchor=CENTER)
     tree.heading("vol_name", text="Name", anchor=CENTER)
     tree.heading("vol_dob", text="Date of birth", anchor=CENTER)
     tree.heading("vol_phone", text="Phone Number", anchor=CENTER)

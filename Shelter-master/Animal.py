@@ -34,7 +34,7 @@ def openAnimal():
     # heading label
     headingFrame1 = Frame(root_an,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.2,rely=0.1,relwidth=0.6,relheight=0.16)
-    headingLabel = Label(headingFrame1, text="Animal data", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Animal Menu", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
     #buttons for different tables

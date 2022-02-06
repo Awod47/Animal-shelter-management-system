@@ -29,7 +29,7 @@ def openCustomer():
     # heading label
     headingFrame1 = Frame(root_cus,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.2,rely=0.1,relwidth=0.6,relheight=0.16)
-    headingLabel = Label(headingFrame1, text="Customer data", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Customer Menu", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
     #buttons for different tables
@@ -79,7 +79,7 @@ def registerCustomer():
         
     headingFrame1 = Frame(root,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.25,rely=0.1,relwidth=0.5,relheight=0.13)
-    headingLabel = Label(headingFrame1, text="Add Animal", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Add Customer", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
     labelFrame = Frame(root,bg='black')
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)

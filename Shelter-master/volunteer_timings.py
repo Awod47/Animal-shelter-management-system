@@ -234,7 +234,7 @@ def viewVolTimings():
 
 
     root_new = Toplevel()
-    root_new.title("Takes Care")
+    root_new.title("Timings")
     root_new.minsize(width=400,height=400)
     root_new.geometry("1920x1800")
     root_new.configure(bg="#222222")
