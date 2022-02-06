@@ -2,6 +2,9 @@ import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
 from tkinter import messagebox, ttk
+from tkinter.font import nametofont
+from Adopt import *
+from Foster import * 
 
 def openCustomer():
     root_cus = Toplevel()
@@ -16,7 +19,7 @@ def openCustomer():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-cust.jpg')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_cus, image = photo)
@@ -37,7 +40,19 @@ def openCustomer():
     btn2.place(relx=0.52,rely=0.4, relwidth=0.25,relheight=0.05)
 
     btn3 = Button(root_cus,text="View Customers",bg='black', fg='white', command=viewCustomers)
-    btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
+    btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
+
+    btn7 = Button(root_cus,text="Foster",bg='black', fg='white', command=openFoster)
+    btn7.place(relx=0.05,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    btn8 = Button(root_cus,text="Issue Adoption",bg='black', fg='white', command=openAdopt)
+    btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    btn1.config(font=('Times New Roman',15))
+    btn2.config(font=('Times New Roman',15))
+    btn3.config(font=('Times New Roman',15))
+    btn7.config(font=('Times New Roman',15))
+    btn8.config(font=('Times New Roman',15))
 
 
     root_cus.mainloop()
@@ -47,6 +62,7 @@ def registerCustomer():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -68,12 +84,12 @@ def registerCustomer():
     labelFrame = Frame(root,bg='black')
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
         
-    # Customer ID
-    lb1 = Label(labelFrame,text="Customer ID : ", bg='black', fg='white')
-    lb1.place(relx=0.05,rely=0.2, relheight=0.08)
+    # # Customer ID
+    # lb1 = Label(labelFrame,text="Customer ID : ", bg='black', fg='white')
+    # lb1.place(relx=0.05,rely=0.2, relheight=0.08)
         
-    cust_id = Entry(labelFrame)
-    cust_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
+    # cust_id = Entry(labelFrame)
+    # cust_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
         
     # Customer name
     lb2 = Label(labelFrame,text="Name : ", bg='black', fg='white')
@@ -130,7 +146,7 @@ def registerCustomer():
     def AddCustomer():
         #customer_id = cust_id.get()
         customer_name = cust_name.get()
-        customer_phone = cust_phone.get()
+        customer_phone = int(cust_phone.get())
         customer_dob = dob.get()
         customer_address = address.get()
 
@@ -156,6 +172,10 @@ def registerCustomer():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -164,6 +184,7 @@ def removeCustomer():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -221,6 +242,10 @@ def removeCustomer():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -232,6 +257,7 @@ def viewCustomers():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -306,14 +332,16 @@ def viewCustomers():
     style.configure('Treeview', rowheight=40)
     style.configure('Treeview', columnwidth=70)
     style.configure("Treeview.Heading", font=(None, 20))
+    style.configure("Treeview.Column", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("cust_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("cust_name", width=200, minwidth=50, anchor=CENTER)
     tree.column("phone", width=200, minwidth=50, anchor=CENTER)
     tree.column("DOB", width=250, minwidth=50, anchor=CENTER)
-    tree.column("address", width=200, minwidth=50, anchor=CENTER)
+    tree.column("address", width=350, minwidth=50, anchor=CENTER)
     
 
     tree.heading("cust_id", text="Customer Id", anchor=CENTER)
@@ -348,6 +376,11 @@ def viewCustomers():
     lb5 = Label(add_frame, text="Address")
     lb5.grid(row=0, column=3, padx=160, pady=10)
 
+    lb2.config(font=('Times New Roman',15))
+    lb3.config(font=('Times New Roman',15))
+    lb4.config(font=('Times New Roman',15))
+    lb5.config(font=('Times New Roman',15))
+
     #Entry boxes
 
     cust_name = Entry(add_frame)
@@ -369,6 +402,7 @@ def viewCustomers():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -397,7 +431,7 @@ def viewCustomers():
             return newidstr
 
         try:
-            customer_id = sqInsertCustomer(cust_name.get(), phone.get(), Dob.get(), address.get())
+            customer_id = sqInsertCustomer(cust_name.get(), int(phone.get()), Dob.get(), address.get())
             tree.insert(parent='', index='end', text="", values=(customer_id, cust_name.get(), phone.get(), Dob.get(), address.get()))
            
             # Clear the boxes
@@ -478,19 +512,24 @@ def viewCustomers():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=5)
+    add_button.grid(row=0, column=0, padx=125, pady=5)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=5)
+    edit_button.grid(row=0, column=1, padx=125, pady=5)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=5)
+    update_button.grid(row=0, column=2, padx=125, pady=5)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=5)
+    remove_one.grid(row=0, column=3, padx=125, pady=5)
+
+    add_button.config(font=('Times New Roman',15))
+    edit_button.config(font=('Times New Roman',15))
+    update_button.config(font=('Times New Roman',15))
+    remove_one.config(font=('Times New Roman',15))
 
     root_new.mainloop()
     

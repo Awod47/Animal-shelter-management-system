@@ -2,6 +2,7 @@ import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
 from tkinter import messagebox, ttk
+from tkinter.font import nametofont
 from Adopt import *
 from Injury import *
 from Foster import *
@@ -23,7 +24,7 @@ def openAnimal():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-animal.jfif')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_an, image = photo)
@@ -44,23 +45,28 @@ def openAnimal():
     btn2.place(relx=0.52,rely=0.4, relwidth=0.25,relheight=0.05)
 
     btn3 = Button(root_an,text="View Animals",bg='black', fg='white', command=viewAnimal)
-    btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
+    btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
 
+    btn5 = Button(root_an,text="Injury record",bg='black', fg='white', command=viewInjury)
+    btn5.place(relx=0.70,rely=0.78, relwidth=0.25,relheight=0.05)
 
-    btn5 = Button(root_an,text="Add Injury",bg='black', fg='white', command=registerAnimal)
-    btn5.place(relx=0.05,rely=0.05, relwidth=0.25,relheight=0.05)
-
-    btn6 = Button(root_an,text="Report Spending",bg='black', fg='white', command=registerSpending)
-    btn6.place(relx=0.70,rely=0.05, relwidth=0.25,relheight=0.05)
-
-    btn7 = Button(root_an,text="Issue Foster",bg='black', fg='white', command=IssueFoster)
+    btn7 = Button(root_an,text="Foster",bg='black', fg='white', command=openFoster)
     btn7.place(relx=0.05,rely=0.70, relwidth=0.25,relheight=0.05)
 
-    btn8 = Button(root_an,text="Issue Adopt",bg='black', fg='white', command=IssueAdoption)
+    btn8 = Button(root_an,text="Issue Adopt",bg='black', fg='white', command=openAdopt)
     btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
 
     btn9 = Button(root_an,text="return Animal",bg='black', fg='white', command=ReturnAnimal)
     btn9.place(relx=0.05,rely=0.78, relwidth=0.25,relheight=0.05)
+
+    headingLabel.config(font=('Times New Roman',22))
+    btn1.config(font=('Times New Roman',15))
+    btn2.config(font=('Times New Roman',15))
+    btn3.config(font=('Times New Roman',15))
+    btn7.config(font=('Times New Roman',15))
+    btn8.config(font=('Times New Roman',15))
+    btn5.config(font=('Times New Roman',15))
+    btn9.config(font=('Times New Roman',15))
 
     root_an.mainloop()
 
@@ -70,6 +76,7 @@ def registerAnimal():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -91,12 +98,12 @@ def registerAnimal():
     labelFrame = Frame(root,bg='black')
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
         
-    # Animal ID
-    lb1 = Label(labelFrame,text="Animal ID : ", bg='black', fg='white')
-    lb1.place(relx=0.05,rely=0.2, relheight=0.08)
+    # # Animal ID
+    # lb1 = Label(labelFrame,text="Animal ID : ", bg='black', fg='white')
+    # lb1.place(relx=0.05,rely=0.2, relheight=0.08)
         
-    an_id = Entry(labelFrame)
-    an_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
+    # an_id = Entry(labelFrame)
+    # an_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
         
     # Animal name
     lb2 = Label(labelFrame,text="Name : ", bg='black', fg='white')
@@ -133,7 +140,7 @@ def registerAnimal():
     details = Entry(labelFrame)
     details.place(relx=0.3,rely=0.7, relwidth=0.62, relheight=0.08)
     
-
+    
     def sqInsertAnimal(aname,aage,breed,species,details):
         cur.execute("SELECT an_id from Animal")
         anidlist=cur.fetchall()
@@ -162,7 +169,7 @@ def registerAnimal():
     def AddAnimal():
         #animal_id = an_id.get()
         animal_name = an_name.get()
-        animal_age = an_age.get()
+        animal_age = int(an_age.get())
         animal_breed = breed.get()
         animal_species = species.get()
         animal_details = details.get()
@@ -194,6 +201,10 @@ def registerAnimal():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -204,6 +215,7 @@ def removeAnimal():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -259,6 +271,10 @@ def removeAnimal():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -270,6 +286,7 @@ def viewAnimal():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -347,6 +364,7 @@ def viewAnimal():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("an_name", width=200, minwidth=50, anchor=CENTER)
@@ -390,6 +408,12 @@ def viewAnimal():
     lb6 = Label(add_frame, text="Status")
     lb6.grid(row=0, column=4, padx=125, pady=10)
 
+    lb2.config(font=('Times New Roman',15))
+    lb3.config(font=('Times New Roman',15))
+    lb4.config(font=('Times New Roman',15))
+    lb5.config(font=('Times New Roman',15))
+    lb6.config(font=('Times New Roman',15))
+
     #Entry boxes
 
     an_name = Entry(add_frame)
@@ -413,6 +437,7 @@ def viewAnimal():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -459,8 +484,8 @@ def viewAnimal():
     def remove_record():
         
         def sqDeleteAnimal(aid):
-            cur.execute("DELETE FROM SPENDING WHERE DONOR_ID IS NULL AND AN_ID=?;",(aid,))
-            cur.execute("DELETE FROM TAKES_CARE WHERE VOL_ID IS NULL AND AN_ID=?;",(aid,))
+            cur.execute("DELETE FROM SPENDING WHERE AN_ID=?;",(aid,))
+            cur.execute("DELETE FROM TAKES_CARE WHERE AN_ID=?;",(aid,))
             cur.execute("DELETE FROM ANIMAL WHERE AN_ID=?;",(aid,))
             con.commit()
 
@@ -526,19 +551,24 @@ def viewAnimal():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=125, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=125, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=125, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=125, pady=10)
+
+    add_button.config(font=('Times New Roman',15))
+    edit_button.config(font=('Times New Roman',15))
+    update_button.config(font=('Times New Roman',15))
+    remove_one.config(font=('Times New Roman',15))
 
     root_new.mainloop()
     
@@ -550,6 +580,7 @@ def ReturnAnimal():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -640,5 +671,8 @@ def ReturnAnimal():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
-    
+
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
+
     root.mainloop()

@@ -2,6 +2,9 @@ import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
 from tkinter import messagebox, ttk
+from tkinter.font import nametofont
+from volunteer_timings import *
+from takes_care import *
 
 def openVolunteer():
     root_vol = Toplevel()
@@ -16,7 +19,7 @@ def openVolunteer():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-care.jpeg')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_vol, image = photo)
@@ -37,7 +40,20 @@ def openVolunteer():
     btn2.place(relx=0.52,rely=0.4, relwidth=0.25,relheight=0.05)
 
     btn3 = Button(root_vol,text="View Volunteers",bg='black', fg='white', command=viewVolunteers)
-    btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
+    btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
+
+    btn7 = Button(root_vol,text="Timings records",bg='black', fg='white', command=viewVolTimings)
+    btn7.place(relx=0.05,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    btn8 = Button(root_vol,text="Takes care records",bg='black', fg='white', command=viewCare)
+    btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    headingLabel.config(font=('Times New Roman',22))
+    btn1.config(font=('Times New Roman',13))
+    btn2.config(font=('Times New Roman',13))
+    btn3.config(font=('Times New Roman',13))
+    btn7.config(font=('Times New Roman',13))
+    btn8.config(font=('Times New Roman',13))
 
     root_vol.mainloop()
 
@@ -48,6 +64,7 @@ def registerVolunteer():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -70,11 +87,11 @@ def registerVolunteer():
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
         
     # volunteer ID
-    lb1 = Label(labelFrame,text="Volunteer ID : ", bg='black', fg='white')
-    lb1.place(relx=0.05,rely=0.2, relheight=0.08)
+    # lb1 = Label(labelFrame,text="Volunteer ID : ", bg='black', fg='white')
+    # lb1.place(relx=0.05,rely=0.2, relheight=0.08)
         
-    vol_id = Entry(labelFrame)
-    vol_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
+    # vol_id = Entry(labelFrame)
+    # vol_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
         
     # volunteer name
     lb2 = Label(labelFrame,text="Name : ", bg='black', fg='white')
@@ -133,7 +150,7 @@ def registerVolunteer():
         #volunteer_id = vol_id.get()
         volunteer_name = vol_name.get()
         volunteer_dob = vol_dob.get()
-        volunteer_phone = vol_phone.get()
+        volunteer_phone = int(vol_phone.get())
         volunteer_address = vol_address.get()
 
         #insertVolunteer = "insert into "+VolunteerTable +" values('"+volunteer_id+"', '"+volunteer_name+"', '"+volunteer_dob+"' , '"+volunteer_phone+"', '"+volunteer_address+"');"
@@ -155,11 +172,15 @@ def registerVolunteer():
 
 
     #Submit Button
-    SubmitBtn = Button(root,text="SUBMIT",bg='#d1ccc0', fg='black',command=AddVolunteer)
+    SubmitBtn = Button(root,text="Submit",bg='#d1ccc0', fg='black',command=AddVolunteer)
     SubmitBtn.place(relx=0.28,rely=0.9, relwidth=0.18,relheight=0.08)
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',13))
+    SubmitBtn.config(font=('Times New Roman',13))
+    quitBtn.config(font=('Times New Roman',13))
     
     root.mainloop()
 
@@ -170,6 +191,7 @@ def removeVolunteer():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -224,6 +246,10 @@ def removeVolunteer():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',13))
+    SubmitBtn.config(font=('Times New Roman',13))
+    quitBtn.config(font=('Times New Roman',13))
     
     root.mainloop()
 
@@ -233,6 +259,7 @@ def viewVolunteers():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -273,6 +300,7 @@ def viewVolunteers():
             try:
                 con = sqlite3.connect("shelter.db")
                 cur = con.cursor()
+                cur.execute("PRAGMA foreign_keys = ON;")
             except Exception as e:
                 print("error during connection: "+str(e))
 
@@ -311,12 +339,13 @@ def viewVolunteers():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("vol_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("vol_name", width=200, minwidth=50, anchor=CENTER)
     tree.column("vol_dob", width=250, minwidth=50, anchor=CENTER)
     tree.column("vol_phone", width=200, minwidth=50, anchor=CENTER)
-    tree.column("vol_address", width=200, minwidth=50, anchor=CENTER)
+    tree.column("vol_address", width=350, minwidth=50, anchor=CENTER)
     
 
     tree.heading("vol_id", text="Customer Id", anchor=CENTER)
@@ -351,6 +380,11 @@ def viewVolunteers():
     lb5 = Label(add_frame, text="Address")
     lb5.grid(row=0, column=3, padx=160, pady=10)
 
+    lb2.config(font=('Times New Roman',13))
+    lb3.config(font=('Times New Roman',13))
+    lb4.config(font=('Times New Roman',13))
+    lb5.config(font=('Times New Roman',13))
+
     #Entry boxes
 
     vol_name = Entry(add_frame)
@@ -372,6 +406,7 @@ def viewVolunteers():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -481,19 +516,24 @@ def viewVolunteers():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=140, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=140, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=140, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=140, pady=10)
+
+    add_button.config(font=('Times New Roman',13))
+    edit_button.config(font=('Times New Roman',13))
+    update_button.config(font=('Times New Roman',13))
+    remove_one.config(font=('Times New Roman',13))
 
     root_new.mainloop()
     

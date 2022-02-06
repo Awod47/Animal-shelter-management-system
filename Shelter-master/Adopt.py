@@ -2,6 +2,7 @@ from email import message
 import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
+from tkinter.font import nametofont
 from tkinter import messagebox, ttk
 
 def openAdopt():
@@ -17,7 +18,7 @@ def openAdopt():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-foster.jpg')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_adopt, image = photo)
@@ -38,7 +39,12 @@ def openAdopt():
     btn2.place(relx=0.52,rely=0.4, relwidth=0.25,relheight=0.05)
 
     btn3 = Button(root_adopt,text="View Adoptions",bg='black', fg='white', command=viewAdoptions)
-    btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
+    btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
+
+    headingLabel.config(font=('Times New Roman',22))
+    btn1.config(font=('Times New Roman',15))
+    btn2.config(font=('Times New Roman',15))
+    btn3.config(font=('Times New Roman',15))
 
     root_adopt.mainloop()
 
@@ -134,6 +140,10 @@ def IssueAdoption():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',13))
+    SubmitBtn.config(font=('Times New Roman',13))
+    quitBtn.config(font=('Times New Roman',13))
     
     root.mainloop()
 
@@ -214,6 +224,10 @@ def removeAdoptions():
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
     
+    headingLabel.config(font=('Times New Roman',13))
+    SubmitBtn.config(font=('Times New Roman',13))
+    quitBtn.config(font=('Times New Roman',13))
+
     root.mainloop()
 
 
@@ -302,6 +316,7 @@ def viewAdoptions():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("cust_id", width=250, minwidth=50, anchor=CENTER)
@@ -331,6 +346,11 @@ def viewAdoptions():
 
     lb3 = Label(add_frame, text="Date")
     lb3.grid(row=0, column=2, padx=210, pady=10)
+
+    lb2.config(font=('Times New Roman',13))
+    lb3.config(font=('Times New Roman',13))
+    lb1.config(font=('Times New Roman',13))
+    
 
 
     #Entry boxes
@@ -454,19 +474,24 @@ def viewAdoptions():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=140, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=140, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=140, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=140, pady=10)
+
+    add_button.config(font=('Times New Roman',13))
+    edit_button.config(font=('Times New Roman',13))
+    update_button.config(font=('Times New Roman',13))
+    remove_one.config(font=('Times New Roman',13))
 
     root_new.mainloop()
     

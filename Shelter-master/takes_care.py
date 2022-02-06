@@ -1,11 +1,12 @@
 import sqlite3
 from tkinter import *
+from tkinter.font import nametofont
 from PIL import ImageTk,Image 
 from tkinter import messagebox, ttk
 
 def openTakesCare():
     root_tc = Toplevel()
-    root_tc.title("Animal")
+    root_tc.title("Care")
     root_tc.minsize(width=400,height=400)
     root_tc.geometry("1920x1800")
 
@@ -16,7 +17,7 @@ def openTakesCare():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-care.jpeg')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_tc, image = photo)
@@ -45,6 +46,7 @@ def registerCare():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -145,6 +147,7 @@ def removeCare():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -241,6 +244,7 @@ def viewCare():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -281,6 +285,7 @@ def viewCare():
             try:
                 con = sqlite3.connect("shelter.db")
                 cur = con.cursor()
+                cur.execute("PRAGMA foreign_keys = ON;")
             except Exception as e:
                 print("error during connection: "+str(e))
 
@@ -319,6 +324,7 @@ def viewCare():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("vol_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
@@ -359,6 +365,12 @@ def viewCare():
     lb5 = Label(add_frame, text="End Time")
     lb5.grid(row=0, column=4, padx=120, pady=10)
 
+    lb1.config(font=('Times New Roman',13))
+    lb2.config(font=('Times New Roman',13))
+    lb3.config(font=('Times New Roman',13))
+    lb4.config(font=('Times New Roman',13))
+    lb5.config(font=('Times New Roman',13))
+
 
     #Entry boxes
     vol_id = Entry(add_frame)
@@ -383,6 +395,7 @@ def viewCare():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -480,19 +493,25 @@ def viewCare():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=140, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=140, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=140, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=140, pady=10)
+
+    add_button.config(font=('Times New Roman',13))
+    edit_button.config(font=('Times New Roman',13))
+    update_button.config(font=('Times New Roman',13))
+    remove_one.config(font=('Times New Roman',13))
+
 
     root_new.mainloop()
     

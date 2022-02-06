@@ -1,6 +1,7 @@
 import sqlite3
 from tkinter import *
 from PIL import ImageTk,Image 
+from tkinter.font import nametofont
 from tkinter import messagebox, ttk
 
 def openSpending():
@@ -26,7 +27,7 @@ def openSpending():
     # heading label
     headingFrame1 = Frame(root_sp,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.2,rely=0.1,relwidth=0.6,relheight=0.16)
-    headingLabel = Label(headingFrame1, text="Animal data", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Spending data", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
     #buttons for different tables
@@ -46,6 +47,7 @@ def registerSpending():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -155,6 +157,7 @@ def removeSpending():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -261,6 +264,7 @@ def viewSpendings():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -301,6 +305,7 @@ def viewSpendings():
             try:
                 con = sqlite3.connect("shelter.db")
                 cur = con.cursor()
+                cur.execute("PRAGMA foreign_keys = ON;")
             except Exception as e:
                 print("error during connection: "+str(e))
 
@@ -339,6 +344,7 @@ def viewSpendings():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("donor_id", width=200, minwidth=50, anchor=CENTER)
@@ -367,22 +373,30 @@ def viewSpendings():
 
     #Labels
     lb1 = Label(add_frame, text="Animal ID")
-    lb1.grid(row=0, column=0,  padx=105, pady=10)
+    lb1.grid(row=0, column=0,  padx=95, pady=10)
 
     lb2 = Label(add_frame, text="Donor ID")
-    lb2.grid(row=0, column=1,  padx=105, pady=10)
+    lb2.grid(row=0, column=1,  padx=95, pady=10)
 
     lb3 = Label(add_frame, text="Resource")
-    lb3.grid(row=0, column=2, padx=105, pady=10)
+    lb3.grid(row=0, column=2, padx=95, pady=10)
 
     lb4 = Label(add_frame, text="Amount")
-    lb4.grid(row=0, column=3, padx=105, pady=10)
+    lb4.grid(row=0, column=3, padx=95, pady=10)
 
     lb5 = Label(add_frame, text="time")
-    lb5.grid(row=0, column=4, padx=105, pady=10)
+    lb5.grid(row=0, column=4, padx=95, pady=10)
 
     lb6 = Label(add_frame, text="Date")
-    lb6.grid(row=0, column=5, padx=105, pady=10)
+    lb6.grid(row=0, column=5, padx=95, pady=10)
+
+    lb1.config(font=('Times New Roman',13))
+    lb2.config(font=('Times New Roman',13))
+    lb3.config(font=('Times New Roman',13))
+    lb4.config(font=('Times New Roman',13))
+    lb5.config(font=('Times New Roman',13))
+    lb6.config(font=('Times New Roman',13))
+
 
     #Entry boxes
     an_id = Entry(add_frame)
@@ -409,6 +423,7 @@ def viewSpendings():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -510,19 +525,24 @@ def viewSpendings():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=140, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=140, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=140, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=140, pady=10)
+
+    add_button.config(font=('Times New Roman',13))
+    edit_button.config(font=('Times New Roman',13))
+    update_button.config(font=('Times New Roman',13))
+    remove_one.config(font=('Times New Roman',13))
 
     root_new.mainloop()
     

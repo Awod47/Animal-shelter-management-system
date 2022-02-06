@@ -1,7 +1,11 @@
 import sqlite3
 from tkinter import *
+from tkinter import font
 from PIL import ImageTk,Image 
+from tkinter.font import nametofont
 from tkinter import messagebox, ttk
+
+from spending import viewSpendings
 
 def openDonations():
     root_don = Toplevel()
@@ -16,7 +20,7 @@ def openDonations():
         photo = ImageTk.PhotoImage(image)
         label.config(image = photo)
         label.image = photo #avoid garbage collection
-    image = Image.open('pup.jpg')
+    image = Image.open('shelter-donation.jpg')
     copy_of_image = image.copy()
     photo = ImageTk.PhotoImage(image)
     label = ttk.Label(root_don, image = photo)
@@ -26,7 +30,7 @@ def openDonations():
     # heading label
     headingFrame1 = Frame(root_don,bg="#FFBB00",bd=5)
     headingFrame1.place(relx=0.2,rely=0.1,relwidth=0.6,relheight=0.16)
-    headingLabel = Label(headingFrame1, text="Animal data", bg='black', fg='white', font=('Courier',15))
+    headingLabel = Label(headingFrame1, text="Donations data", bg='black', fg='white', font=('Courier',15))
     headingLabel.place(relx=0,rely=0, relwidth=1, relheight=1)
 
     #buttons for different tables
@@ -37,7 +41,16 @@ def openDonations():
     btn2.place(relx=0.52,rely=0.4, relwidth=0.25,relheight=0.05)
 
     btn3 = Button(root_don,text="View Donations",bg='black', fg='white', command=viewDonations)
-    btn3.place(relx=0.23,rely=0.5, relwidth=0.25,relheight=0.05)
+    btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
+
+    btn7 = Button(root_don,text="Spendings records",bg='black', fg='white', command=viewSpendings)
+    btn7.place(relx=0.37,rely=0.70, relwidth=0.25,relheight=0.05)
+
+    headingLabel.config(font=('Times New Roman',22))
+    btn1.config(font=('Times New Roman',15))
+    btn2.config(font=('Times New Roman',15))
+    btn3.config(font=('Times New Roman',15))
+    btn7.config(font=('Times New Roman',15))
 
     root_don.mainloop()
 
@@ -47,6 +60,7 @@ def registerDonation():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
     
@@ -68,12 +82,12 @@ def registerDonation():
     labelFrame = Frame(root,bg='black')
     labelFrame.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.4)
         
-    # Donor ID
-    lb1 = Label(labelFrame,text="Donor ID : ", bg='black', fg='white')
-    lb1.place(relx=0.05,rely=0.2, relheight=0.08)
+    # # Donor ID
+    # lb1 = Label(labelFrame,text="Donor ID : ", bg='black', fg='white')
+    # lb1.place(relx=0.05,rely=0.2, relheight=0.08)
         
-    don_id = Entry(labelFrame)
-    don_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
+    # don_id = Entry(labelFrame)
+    # don_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
         
     # resource
     lb2 = Label(labelFrame,text="Resource donated : ", bg='black', fg='white')
@@ -158,6 +172,10 @@ def registerDonation():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -168,6 +186,7 @@ def removeDonation():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -222,6 +241,10 @@ def removeDonation():
     
     quitBtn = Button(root,text="Quit",bg='#f7f1e3', fg='black', command=root.destroy)
     quitBtn.place(relx=0.53,rely=0.9, relwidth=0.18,relheight=0.08)
+
+    headingLabel.config(font=('Times New Roman',15))
+    SubmitBtn.config(font=('Times New Roman',15))
+    quitBtn.config(font=('Times New Roman',15))
     
     root.mainloop()
 
@@ -230,6 +253,7 @@ def viewDonations():
     try:
         con = sqlite3.connect("shelter.db")
         cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
     except Exception as e:
         print("error during connection: "+str(e))
 
@@ -306,6 +330,8 @@ def viewDonations():
     style.configure("Treeview.Heading", font=(None, 20))
     style.map("Treeview", background = [('selected', 'orange')])
 
+    nametofont("TkDefaultFont").configure(size=13)
+
 
     tree.column("donor_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("resource", width=200, minwidth=50, anchor=CENTER)
@@ -333,16 +359,21 @@ def viewDonations():
     #Labels
 
     lb2 = Label(add_frame, text="Resource")
-    lb2.grid(row=0, column=0,  padx=160, pady=10)
+    lb2.grid(row=0, column=0,  padx=145, pady=10)
 
     lb3 = Label(add_frame, text="Amount")
-    lb3.grid(row=0, column=1, padx=160, pady=10)
+    lb3.grid(row=0, column=1, padx=145, pady=10)
 
     lb4 = Label(add_frame, text="Donation Date")
-    lb4.grid(row=0, column=2, padx=160, pady=10)
+    lb4.grid(row=0, column=2, padx=145, pady=10)
 
     lb5 = Label(add_frame, text="Availability")
-    lb5.grid(row=0, column=3, padx=160, pady=10)
+    lb5.grid(row=0, column=3, padx=145, pady=10)
+
+    lb2.config(font=('Times New Roman',15))
+    lb3.config(font=('Times New Roman',15))
+    lb4.config(font=('Times New Roman',15))
+    lb5.config(font=('Times New Roman',15))
 
     #Entry boxes
 
@@ -364,6 +395,7 @@ def viewDonations():
         try:
             con = sqlite3.connect("shelter.db")
             cur = con.cursor()
+            cur.execute("PRAGMA foreign_keys = ON;")
         except Exception as e:
             print("error during connection: "+str(e))
 
@@ -409,7 +441,7 @@ def viewDonations():
     def remove_record():
         
         def sqDeleteDonations(did):
-            cur.execute("DELETE FROM SPENDING WHERE AN_ID IS NULL AND DONOR_ID=?;",(did,))
+            cur.execute("DELETE FROM SPENDING WHERE DONOR_ID=?;",(did,))
             cur.execute("DELETE FROM DONATIONS WHERE DONOR_ID=?;",(did,))
             con.commit()
 
@@ -473,19 +505,24 @@ def viewDonations():
 
     #add new record
     add_button = Button(button_frame, text="Add Record", command=add_record)
-    add_button.grid(row=0, column=0, padx=145, pady=10)
+    add_button.grid(row=0, column=0, padx=125, pady=10)
 
     #select record to edit
     edit_button = Button(button_frame, text="Edit Record", command=edit_record)
-    edit_button.grid(row=0, column=1, padx=145, pady=10)
+    edit_button.grid(row=0, column=1, padx=125, pady=10)
 
     #update selected
     update_button = Button(button_frame, text="Save Record", command=update_record)
-    update_button.grid(row=0, column=2, padx=145, pady=10)
+    update_button.grid(row=0, column=2, padx=125, pady=10)
 
     # Remove Selected
     remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
-    remove_one.grid(row=0, column=3, padx=145, pady=10)
+    remove_one.grid(row=0, column=3, padx=125, pady=10)
+
+    add_button.config(font=('Times New Roman',15))
+    edit_button.config(font=('Times New Roman',15))
+    update_button.config(font=('Times New Roman',15))
+    remove_one.config(font=('Times New Roman',15))
 
     root_new.mainloop()
     
