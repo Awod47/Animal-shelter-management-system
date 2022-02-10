@@ -75,34 +75,41 @@ def registerVolTimings():
         
     vol_id = Entry(labelFrame)
     vol_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
-        
-    # Date
-    lb2 = Label(labelFrame,text="Date (yyyy-mm-dd) : ", bg='black', fg='white')
+
+    lb2 = Label(labelFrame,text="Animal ID : ", bg='black', fg='white')
     lb2.place(relx=0.05,rely=0.3, relheight=0.08)
         
-    date = Entry(labelFrame)
-    date.place(relx=0.3,rely=0.3, relwidth=0.62, relheight=0.08)
+    an_id = Entry(labelFrame)
+    an_id.place(relx=0.3,rely=0.3, relwidth=0.62, relheight=0.08)
         
-    # Start Time
-    lb3 = Label(labelFrame,text="Start Time (hh : mm) : ", bg='black', fg='white')
+    # Date
+    lb3 = Label(labelFrame,text="Date (yyyy-mm-dd) : ", bg='black', fg='white')
     lb3.place(relx=0.05,rely=0.4, relheight=0.08)
         
-    vStartTime = Entry(labelFrame)
-    vStartTime.place(relx=0.3,rely=0.4, relwidth=0.62, relheight=0.08)
+    date = Entry(labelFrame)
+    date.place(relx=0.3,rely=0.4, relwidth=0.62, relheight=0.08)
         
-    # End Time
-    lb4 = Label(labelFrame,text="End Time (hh : mm): ", bg='black', fg='white')
+    # Start Time
+    lb4 = Label(labelFrame,text="Start Time (hh : mm) : ", bg='black', fg='white')
     lb4.place(relx=0.05,rely=0.5, relheight=0.08)
         
+    vStartTime = Entry(labelFrame)
+    vStartTime.place(relx=0.3,rely=0.5, relwidth=0.62, relheight=0.08)
+        
+    # End Time
+    lb5 = Label(labelFrame,text="End Time (hh : mm): ", bg='black', fg='white')
+    lb5.place(relx=0.05,rely=0.6, relheight=0.08)
+        
     vEndTime = Entry(labelFrame)
-    vEndTime.place(relx=0.3,rely=0.5, relwidth=0.62, relheight=0.08)
+    vEndTime.place(relx=0.3,rely=0.6, relwidth=0.62, relheight=0.08)
 
-    def sqInsertVolunteer_Timings(vol_id,date,vstart_time,vend_time): 
-        cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?);",(vol_id,date,vstart_time,vend_time))  
+    def sqInsertVolunteer_Timings(vol_id,an_id,date,vstart_time,vend_time): 
+        cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?,?);",(vol_id,an_id,date,vstart_time,vend_time))  
         con.commit()
 
     def AddVolunteerTimings():
         volunteer_id = vol_id.get()
+        animal_id = an_id.get()
         volDate = date.get()
         volStartTime = vStartTime.get()
         volEndTime = vEndTime.get()
@@ -112,12 +119,13 @@ def registerVolTimings():
         try:
             # cur.execute(insertSpending)
             # con.commit()
-            sqInsertVolunteer_Timings(volunteer_id, volDate, volStartTime, volEndTime)
+            sqInsertVolunteer_Timings(volunteer_id, animal_id,volDate, volStartTime, volEndTime)
             messagebox.showinfo('Success', "Volunteer Timings Added")
         except:
             messagebox.showerror('Error', "Something went wrong")
         
         print(volunteer_id)
+        print(animal_id)
         print(volDate)
         print(volStartTime)
         print(volEndTime) 
@@ -168,46 +176,54 @@ def removeVolTimings():
         
     vol_id = Entry(labelFrame)
     vol_id.place(relx=0.3,rely=0.2, relwidth=0.62, relheight=0.08)
-        
-    # Animal ID
-    lb2 = Label(labelFrame,text="Date : ", bg='black', fg='white')
+
+    lb2 = Label(labelFrame,text="Animal ID : ", bg='black', fg='white')
     lb2.place(relx=0.05,rely=0.3, relheight=0.08)
         
-    date = Entry(labelFrame)
-    date.place(relx=0.3,rely=0.3, relwidth=0.62, relheight=0.08)
-
-    # start time
-    lb3 = Label(labelFrame,text="Start Time (hh : mm): ", bg='black', fg='white')
+    an_id = Entry(labelFrame)
+    an_id.place(relx=0.3,rely=0.3, relwidth=0.62, relheight=0.08)
+        
+    # Animal ID
+    lb3 = Label(labelFrame,text="Date : ", bg='black', fg='white')
     lb3.place(relx=0.05,rely=0.4, relheight=0.08)
         
-    startTime = Entry(labelFrame)
-    startTime.place(relx=0.3,rely=0.4, relwidth=0.62, relheight=0.08)
-        
-    # end time
-    lb4 = Label(labelFrame,text="End Time (hh : mm): ", bg='black', fg='white')
+    date = Entry(labelFrame)
+    date.place(relx=0.3,rely=0.4, relwidth=0.62, relheight=0.08)
+
+    # start time
+    lb4 = Label(labelFrame,text="Start Time (hh : mm): ", bg='black', fg='white')
     lb4.place(relx=0.05,rely=0.5, relheight=0.08)
         
+    startTime = Entry(labelFrame)
+    startTime.place(relx=0.3,rely=0.5, relwidth=0.62, relheight=0.08)
+        
+    # end time
+    lb5 = Label(labelFrame,text="End Time (hh : mm): ", bg='black', fg='white')
+    lb5.place(relx=0.05,rely=0.6, relheight=0.08)
+        
     endTime = Entry(labelFrame)
-    endTime.place(relx=0.3,rely=0.5, relwidth=0.62, relheight=0.08)
+    endTime.place(relx=0.3,rely=0.6, relwidth=0.62, relheight=0.08)
 
 
-    def sqDeleteVolunteer_Timings(vol_id, date, vstart_time, vend_time):
-        cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vol_id, date, vstart_time, vend_time))
+    def sqDeleteVolunteer_Timings(vol_id, an_id, date, vstart_time, vend_time):
+        cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND AN_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vol_id, an_id, date, vstart_time, vend_time))
         con.commit()
 
     def deleteTakesCare():
         volunteer_id = vol_id.get()
+        animal_id = an_id.get()
         vol_date = date.get()
         volStartTime = startTime.get()
         volEndTime = endTime.get()
 
         try:
-            sqDeleteVolunteer_Timings(volunteer_id, vol_date, volStartTime, volEndTime)
+            sqDeleteVolunteer_Timings(volunteer_id, animal_id, vol_date, volStartTime, volEndTime)
             messagebox.showinfo("Success", "Volunteer record deleted")
         except:
             messagebox.showerror("Error", "something went wrong")
 
         vol_id.delete(0, END)
+        an_id.delete(0, END)
         date.delete(0, END)
         startTime.delete(0, END)
         endTime.delete(0, END)
@@ -254,7 +270,7 @@ def viewVolTimings():
         search_entry.pack(pady=20, padx=20)
 
         def sqSearchVolunteer_Timings(key):
-            cur.execute("SELECT * FROM VOLUNTEER_TIMINGS WHERE VOL_ID LIKE ? OR VOL_DATE LIKE ? OR VSTART_TIME LIKE ? OR VEND_TIME LIKE ?;",(key,key,key,key))
+            cur.execute("SELECT * FROM VOLUNTEER_TIMINGS WHERE VOL_ID LIKE ? OR AN_ID LIKE ? OR VOL_DATE LIKE ? OR VSTART_TIME LIKE ? OR VEND_TIME LIKE ?;",(key,key,key,key))
             vtlist = cur.fetchall()
             return vtlist    
 
@@ -277,7 +293,7 @@ def viewVolTimings():
             
             i=0
             for r in records:
-                tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3]))
+                tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4]))
                 i+= 1
                 
         # Add button
@@ -288,7 +304,7 @@ def viewVolTimings():
     records = cur.execute("SELECT * FROM volunteer_timings")
     
     tree = ttk.Treeview(root_new)
-    tree["columns"]=("vol_id", "vol_date", "vStart_time", "vEnd_time")
+    tree["columns"]=("vol_id", "an_id", "vol_date", "vStart_time", "vEnd_time")
     tree['show'] =  'headings'
 
     my_menu = Menu(root_new)
@@ -310,18 +326,20 @@ def viewVolTimings():
     nametofont("TkDefaultFont").configure(size=13)
 
     tree.column("vol_id", width=200, minwidth=50, anchor=CENTER)
+    tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
     tree.column("vol_date", width=150, minwidth=50, anchor=CENTER)
     tree.column("vStart_time", width=250, minwidth=50, anchor=CENTER)
     tree.column("vEnd_time", width=200, minwidth=50, anchor=CENTER)
 
     tree.heading("vol_id", text="Volunteer Id", anchor=CENTER)
+    tree.heading("an_id", text="Animal Id", anchor=CENTER)
     tree.heading("vol_date", text="Date", anchor=CENTER)
     tree.heading("vStart_time", text="Start Time", anchor=CENTER)
     tree.heading("vEnd_time", text="End Time", anchor=CENTER)
 
     i=0
     for r in records:
-        tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3]))
+        tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4]))
         i+= 1
 
     tree.pack(pady=30)
@@ -332,34 +350,41 @@ def viewVolTimings():
 
     #Labels
     lb1 = Label(add_frame, text="Volunteer ID")
-    lb1.grid(row=0, column=0,  padx=150, pady=10)
+    lb1.grid(row=0, column=0,  padx=125, pady=10)
 
-    lb2 = Label(add_frame, text="Date")
-    lb2.grid(row=0, column=1,  padx=150, pady=10)
+    lb2 = Label(add_frame, text="Animal ID")
+    lb2.grid(row=0, column=1,  padx=125, pady=10)
 
-    lb3 = Label(add_frame, text="Start Time")
-    lb3.grid(row=0, column=2, padx=150, pady=10)
+    lb3 = Label(add_frame, text="Date")
+    lb3.grid(row=0, column=2,  padx=125, pady=10)
 
-    lb4 = Label(add_frame, text="End Time")
-    lb4.grid(row=0, column=3, padx=150, pady=10)
+    lb4 = Label(add_frame, text="Start Time")
+    lb4.grid(row=0, column=3, padx=125, pady=10)
+
+    lb5 = Label(add_frame, text="End Time")
+    lb5.grid(row=0, column=4, padx=125, pady=10)
 
     lb1.config(font=('Times New Roman',13))
     lb2.config(font=('Times New Roman',13))
     lb3.config(font=('Times New Roman',13))
     lb4.config(font=('Times New Roman',13))
+    lb5.config(font=('Times New Roman',13))
 
     #Entry boxes
     vol_id = Entry(add_frame)
     vol_id.grid(row=1, column=0)
 
+    an_id = Entry(add_frame)
+    an_id.grid(row=1, column=1)
+
     date = Entry(add_frame)
-    date.grid(row=1, column=1)
+    date.grid(row=1, column=2)
 
     startTime = Entry(add_frame)
-    startTime.grid(row=1, column=2)
+    startTime.grid(row=1, column=3)
 
     endTime = Entry(add_frame)
-    endTime.grid(row=1, column=3)
+    endTime.grid(row=1, column=4)
 
 
 
@@ -372,16 +397,17 @@ def viewVolTimings():
         except Exception as e:
             print("error during connection: "+str(e))
 
-        def sqInsertVolunteer_Timings(vol_id,date,vstart_time,vend_time): 
-            cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?);",(vol_id,date,vstart_time,vend_time))  
+        def sqInsertVolunteer_Timings(vol_id,an_id,date,vstart_time,vend_time): 
+            cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?,?);",(vol_id,an_id,date,vstart_time,vend_time))  
             con.commit()
 
         try:
-            sqInsertVolunteer_Timings(vol_id.get(), date.get(), startTime.get(), endTime.get())
-            tree.insert(parent='', index='end', text="", values=(vol_id.get(), date.get(), startTime.get(), endTime.get()))
+            sqInsertVolunteer_Timings(vol_id.get(), an_id.get(), date.get(), startTime.get(), endTime.get())
+            tree.insert(parent='', index='end', text="", values=(vol_id.get(), an_id.get(), date.get(), startTime.get(), endTime.get()))
            
             # Clear the boxes
             vol_id.delete(0, END)
+            an_id.delete(0, END)
             date.delete(0, END)
             startTime.delete(0, END)
             endTime.delete(0, END)
@@ -394,7 +420,7 @@ def viewVolTimings():
     def remove_record():
         
         def sqDeleteVolunteer_Timings(vttuple):
-            cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vttuple[0], vttuple[1], vttuple[2], vttuple[3]))
+            cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND AN_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vttuple[0], vttuple[1], vttuple[2], vttuple[3], vttuple[4]))
             con.commit()
 
         selected = tree.focus()
@@ -407,6 +433,7 @@ def viewVolTimings():
 
     def edit_record():
         vol_id.delete(0, END)
+        an_id.delete(0, END)
         date.delete(0, END)
         startTime.delete(0, END)
         endTime.delete(0, END)
@@ -420,19 +447,20 @@ def viewVolTimings():
 
         # output to entry boxes
         vol_id.insert(0, values[0])
-        date.insert(0, values[1])
-        startTime.insert(0, values[2])
-        endTime.insert(0, values[3])
+        an_id.insert(0, values[1])
+        date.insert(0, values[2])
+        startTime.insert(0, values[3])
+        endTime.insert(0, values[4])
 
     
     def update_record():
 
         def sqDeleteVolunteer_Timings(vttuple):
-            cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vttuple[0], vttuple[1], vttuple[2], vttuple[3]))
+            cur.execute("DELETE FROM VOLUNTEER_TIMINGS WHERE VOL_ID=? AND AN_ID=? AND VOL_DATE=? AND VSTART_TIME=? AND VEND_TIME=?;",(vttuple[0], vttuple[1], vttuple[2], vttuple[3], vttuple[4]))
             con.commit()
 
-        def sqInsertVolunteer_Timings(vol_id,date,vstart_time,vend_time): 
-            cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?);",(vol_id,date,vstart_time,vend_time))  
+        def sqInsertVolunteer_Timings(vol_id,an_id,date,vstart_time,vend_time): 
+            cur.execute("INSERT INTO VOLUNTEER_TIMINGS VALUES(?,?,?,?,?);",(vol_id,an_id,date,vstart_time,vend_time))  
             con.commit()
 
         # Grab record number
@@ -441,14 +469,15 @@ def viewVolTimings():
         values = tree.item(selected, 'values')
         
         try:
-            tree.item(selected, text="", values=(vol_id.get(), date.get(), startTime.get(), endTime.get()))
+            tree.item(selected, text="", values=(vol_id.get(), an_id.get(), date.get(), startTime.get(), endTime.get()))
             sqDeleteVolunteer_Timings(values)
             values = tree.item(selected, 'values')
-            sqInsertVolunteer_Timings(vol_id.get(), date.get(), startTime.get(), endTime.get())
+            sqInsertVolunteer_Timings(vol_id.get(), an_id.get(), date.get(), startTime.get(), endTime.get())
             
 
             # Clear entry boxes
             vol_id.delete(0, END)
+            an_id.delete(0, END)
             date.delete(0, END)
             startTime.delete(0, END)
             endTime.delete(0, END)

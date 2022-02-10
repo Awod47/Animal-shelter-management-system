@@ -43,17 +43,17 @@ def openVolunteer():
     btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
 
     btn7 = Button(root_vol,text="Timings records",bg='black', fg='white', command=viewVolTimings)
-    btn7.place(relx=0.05,rely=0.70, relwidth=0.25,relheight=0.05)
+    btn7.place(relx=0.37,rely=0.70, relwidth=0.25,relheight=0.05)
 
-    btn8 = Button(root_vol,text="Takes care records",bg='black', fg='white', command=viewCare)
-    btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
+    # btn8 = Button(root_vol,text="Takes care records",bg='black', fg='white', command=viewCare)
+    # btn8.place(relx=0.70,rely=0.70, relwidth=0.25,relheight=0.05)
 
     headingLabel.config(font=('Times New Roman',22))
     btn1.config(font=('Times New Roman',13))
     btn2.config(font=('Times New Roman',13))
     btn3.config(font=('Times New Roman',13))
     btn7.config(font=('Times New Roman',13))
-    btn8.config(font=('Times New Roman',13))
+    # btn8.config(font=('Times New Roman',13))
 
     root_vol.mainloop()
 
