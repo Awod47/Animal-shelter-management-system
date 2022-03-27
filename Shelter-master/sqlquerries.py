@@ -639,6 +639,20 @@ def sqCreateTables():
         CREATE TABLE IF NOT EXISTS Password(
         pass TEXT );
         """)
+    cur.execute("""
+        CREATE TRIGGER IF NOT EXISTS updatefoster 
+        AFTER INSERT ON foster 
+        BEGIN
+        UPDATE animal SET details = "IFC" WHERE NEW.an_id = an_id;
+        END;
+        """)
+    cur.execute("""
+        CREATE TRIGGER IF NOT EXISTS updateadopt
+        AFTER INSERT ON adopt 
+        BEGIN 
+        UPDATE animal SET details = "Adopted" where NEW.an_id = an_id;
+        END;
+        """)
     con.commit()
 
 # 51. 52.

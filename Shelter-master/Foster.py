@@ -40,10 +40,14 @@ def openFoster():
     btn3 = Button(root_fos,text="View Foster records",bg='black', fg='white', command=viewFosters)
     btn3.place(relx=0.37,rely=0.5, relwidth=0.25,relheight=0.05)
 
+    btn4 = Button(root_fos,text="Foster Details",bg='black', fg='white', command=viewDetails)
+    btn4.place(relx=0.37,rely=0.7, relwidth=0.25,relheight=0.05)
+
     headingLabel.config(font=('Times New Roman',22))
     btn1.config(font=('Times New Roman',15))
     btn2.config(font=('Times New Roman',15))
     btn3.config(font=('Times New Roman',15))
+    btn4.config(font=('Times New Roman',15))
 
     root_fos.mainloop()
 
@@ -522,7 +526,343 @@ def viewFosters():
     update_button.config(font=('Times New Roman',13))
     remove_one.config(font=('Times New Roman',13))
 
-
     root_new.mainloop()
     
    
+def viewDetails():
+    try:
+        con = sqlite3.connect("shelter.db")
+        cur = con.cursor()
+        cur.execute("PRAGMA foreign_keys = ON;")
+    except Exception as e:
+        print("error during connection: "+str(e))
+
+
+    root_new = Toplevel()
+    root_new.title("Foster")
+    root_new.minsize(width=400,height=400)
+    root_new.geometry("1920x1800")
+    root_new.configure(bg="#222222")
+
+
+    def lookup_records():
+
+        search = Toplevel(root_new)
+        search.title("Lookup Records")
+        search.geometry("400x200")
+
+        # Create label frame
+        search_frame = LabelFrame(search, text="Key")
+        search_frame.pack(padx=10, pady=10)
+
+        # Add entry box
+        search_entry = Entry(search_frame, font=("Helvetica", 18))
+        search_entry.pack(pady=20, padx=20)
+
+        def sqSearchAdopt(key):
+            cur.execute("SELECT * FROM DETAILS WHERE CUST_ID LIKE ? OR CUST_NAME LIKE ? OR PHONE LIKE ? OR ADDRESS LIKE ? OR AN_ID LIKE ? OR AN_NAME LIKE ? OR BREED LIKE ? OR SPECIES LIKE ? OR FOST_DATE LIKE ? OR DUE_DATE LIKE ?;",(key,key,key,key,key,key,key,key,key,key))
+            adlist=cur.fetchall()
+            return adlist 
+
+
+        def search_records():
+            lookup_record = search_entry.get()
+            search.destroy()
+            
+            for record in tree.get_children():
+                tree.delete(record)
+            
+            try:
+                con = sqlite3.connect("shelter.db")
+                cur = con.cursor()
+            except Exception as e:
+                print("error during connection: "+str(e))
+
+            records = sqSearchAdopt(lookup_record)
+            
+            i=0
+            for r in records:
+                tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9]))
+                i+= 1
+                
+        # Add button
+        search_button = Button(search, text="Search Records", command=search_records)
+        search_button.pack(padx=20, pady=20)
+
+
+
+    cur.execute("CREATE VIEW IF NOT EXISTS 'FOSDETAILS' AS SELECT ANIMAL.AN_ID, ANIMAL.AN_NAME, ANIMAL.BREED, ANIMAL.SPECIES, CUSTOMER.CUST_ID, CUSTOMER.CUST_NAME, CUSTOMER.PHONE, CUSTOMER.ADDRESS, FOSTER.FOST_DATE, FOSTER.DUE_DATE FROM ANIMAL JOIN FOSTER ON FOSTER.AN_ID = ANIMAL.AN_ID JOIN CUSTOMER ON FOSTER.CUST_ID = CUSTOMER.CUST_ID;")
+    records = cur.execute("SELECT * FROM FOSDETAILS;")
+
+    tree = ttk.Treeview(root_new)
+    tree["columns"]=("an_id", "an_name", "breed", "species", "cust_id", "cust_name", "phone", "address", "fost_date", "due_date")
+    tree['show'] =  'headings'
+
+    my_menu = Menu(root_new)
+    root_new.config(menu=my_menu)
+
+    search_menu = Menu(my_menu, tearoff=0)
+    my_menu.add_cascade(label="Search", menu=search_menu)
+    # Drop down menu
+    search_menu.add_command(label="Search", command=lookup_records)
+
+    # Constructing vertical scrollbar
+    # with treeview
+    horscrlbar = ttk.Scrollbar(root_new, orient ="horizontal", command = tree.xview)
+    
+    # Calling pack method w.r.to vertical
+    # scrollbar
+    horscrlbar.pack(side ='top', fill ='x')
+    
+    # Configuring treeview
+    tree.configure(yscrollcommand = horscrlbar.set)
+ 
+
+    style = ttk.Style()
+    style.theme_use("clam")
+    style.configure("Treeview", background="white", foreground="white", fieldbackground = "white")
+    style.configure('Treeview', rowheight=40)
+    style.configure('Treeview', columnwidth=70)
+    style.configure("Treeview.Heading", font=(None, 20))
+    style.map("Treeview", background = [('selected', 'orange')])
+
+    nametofont("TkDefaultFont").configure(size=13)
+
+    tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
+    tree.column("an_name", width=250, minwidth=50, anchor=CENTER)
+    tree.column("breed", width=200, minwidth=50, anchor=CENTER)
+    tree.column("species", width=250, minwidth=50, anchor=CENTER)
+    tree.column("cust_id", width=200, minwidth=50, anchor=CENTER)
+    tree.column("cust_name", width=180, minwidth=50, anchor=CENTER)
+    tree.column("phone", width=200, minwidth=50, anchor=CENTER)
+    tree.column("address", width=200, minwidth=50, anchor=CENTER)
+    tree.column("fost_date", width=200, minwidth=50, anchor=CENTER)
+    tree.column("due_date", width=200, minwidth=50, anchor=CENTER)
+
+    tree.heading("an_id", text="Animal ID", anchor=CENTER)
+    tree.heading("an_name", text="Name", anchor=CENTER)
+    tree.heading("breed", text="Breed", anchor=CENTER)
+    tree.heading("species", text="Species", anchor=CENTER)
+    tree.heading("cust_id", text="Customer Id", anchor=CENTER)
+    tree.heading("cust_name", text="Name", anchor=CENTER)
+    tree.heading("phone", text="Phone", anchor=CENTER)
+    tree.heading("address", text="Address", anchor=CENTER)
+    tree.heading("fost_date", text="Fost Date", anchor=CENTER)
+    tree.heading("due_date", text="Due Date", anchor=CENTER)
+
+    i=0
+    for r in records:
+        tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9]))
+        i+= 1
+
+    tree.pack(pady=30, padx= 15)
+    tree['show'] =  'headings'
+
+    # my_menu = Menu(root_new)
+    # root_new.config(menu=my_menu)
+
+    # search_menu = Menu(my_menu, tearoff=0)
+    # my_menu.add_cascade(label="Search", menu=search_menu)
+    # # Drop down menu
+    # search_menu.add_command(label="Search", command=lookup_records)
+
+
+    # style = ttk.Style()
+    # style.theme_use("clam")
+    # style.configure("Treeview", background="white", foreground="white", fieldbackground = "white")
+    # style.configure('Treeview', rowheight=40)
+    # style.configure('Treeview', columnwidth=70)
+    # style.configure("Treeview.Heading", font=(None, 20))
+    # style.map("Treeview", background = [('selected', 'orange')])
+
+    # nametofont("TkDefaultFont").configure(size=13)
+
+    # tree.column("an_id", width=200, minwidth=50, anchor=CENTER)
+    # tree.column("cust_id", width=250, minwidth=50, anchor=CENTER)
+    # tree.column("fost_date", width=200, minwidth=50, anchor=CENTER)
+    # tree.column("due_date", width=200, minwidth=50, anchor=CENTER)
+
+    # tree.heading("an_id", text="Animal Id", anchor=CENTER)
+    # tree.heading("cust_id", text="Customer ID", anchor=CENTER)
+    # tree.heading("fost_date", text="Date", anchor=CENTER)
+    # tree.heading("due_date", text="Return Date", anchor=CENTER)
+
+    # i=0
+    # for r in records:
+    #     tree.insert('', i, text = "", values = (r[0], r[1], r[2], r[3]))
+    #     i+= 1
+
+    # tree.pack(pady=30)
+    # tree['show'] =  'headings'
+
+    # add_frame = LabelFrame(root_new, bg="black" )
+    # add_frame.pack(fill= "x", expand = "yes", padx = 20)
+
+    # #Labels
+    # lb1 = Label(add_frame, text="Animal ID")
+    # lb1.grid(row=0, column=0,  padx=150, pady=10)
+
+    # lb2 = Label(add_frame, text="Customer ID")
+    # lb2.grid(row=0, column=1,  padx=150, pady=10)
+
+    # lb3 = Label(add_frame, text="Date")
+    # lb3.grid(row=0, column=2, padx=150, pady=10)
+
+    # lb4 = Label(add_frame, text="Return Date")
+    # lb4.grid(row=0, column=3, padx=150, pady=10)
+
+    # lb2.config(font=('Times New Roman',13))
+    # lb3.config(font=('Times New Roman',13))
+    # lb1.config(font=('Times New Roman',13))
+    # lb1.config(font=('Times New Roman',13))
+
+
+    # #Entry boxes
+    # an_id = Entry(add_frame)
+    # an_id.grid(row=1, column=0)
+
+    # cust_id = Entry(add_frame)
+    # cust_id.grid(row=1, column=1)
+
+    # fost_date = Entry(add_frame)
+    # fost_date.grid(row=1, column=2)
+
+    # d_date = Entry(add_frame)
+    # d_date.grid(row=1, column=3)
+
+
+
+    # def add_record():
+
+    #     try:
+    #         con = sqlite3.connect("shelter.db")
+    #         cur = con.cursor()
+    #         cur.execute("PRAGMA foreign_keys = ON;")
+    #     except Exception as e:
+    #         print("error during connection: "+str(e))
+
+    #     def sqInsertFoster(an_id,cust_id,fost_date,due_date):
+    #         cur.execute("INSERT INTO Foster VALUES(?,?,?,?);",(an_id,cust_id,fost_date,due_date))
+    #         con.commit()  
+
+    #     checkAvail = "select details from animal where an_id = '"+an_id.get()+"'"
+    #     cur.execute(checkAvail)
+    #     con.commit()
+    #     for i in cur:
+    #         check = i[0]
+            
+    #     if check == 'avail':
+    #         status = True
+    #     else:
+    #         status = False 
+
+    #     try:
+    #         if status == True:
+    #             sqInsertFoster(an_id.get(), cust_id.get(), fost_date.get(), d_date.get())
+    #             cur.execute("UPDATE ANIMAL SET DETAILS = 'IFC' WHERE AN_ID = '"+an_id.get()+"'")
+    #             con.commit()
+    #             tree.insert(parent='', index='end', text="", values=(an_id.get(), cust_id.get(), fost_date.get(), d_date.get()))
+            
+    #             # Clear the boxes
+    #             an_id.delete(0, END)
+    #             cust_id.delete(0, END)
+    #             fost_date.delete(0, END)
+    #             d_date.delete(0, END)
+    #         else:
+    #             messagebox.showerror("Error", "Animal not available for Foster", parent = root_new)
+    #     except:
+    #         messagebox.showerror("Error","Something went wrong", parent= root_new)
+
+
+
+    # def remove_record():
+        
+    #     def sqDeleteFoster(ftuple):
+    #         cur.execute("DELETE FROM FOSTER WHERE AN_ID=? AND CUST_ID=? AND FOST_DATE=? AND DUE_DATE=?;",(ftuple[0], ftuple[1], ftuple[2], ftuple[3]))
+    #         con.commit()
+
+    #     selected = tree.focus()
+    #     values = tree.item(selected, 'values')
+    #     sqDeleteFoster(values)
+
+    #     x = tree.selection()
+    #     tree.delete(x)
+
+
+    # def edit_record():
+    #     an_id.delete(0, END)
+    #     cust_id.delete(0, END)
+    #     fost_date.delete(0, END)
+    #     d_date.delete(0, END)
+
+    #     # Grab record number
+    #     selected = tree.focus()
+    #     # Grab record values
+    #     values = tree.item(selected, 'values')
+
+    #     #temp_label.config(text=values[0])
+
+    #     # output to entry boxes
+    #     an_id.insert(0, values[0])
+    #     cust_id.insert(0, values[1])
+    #     fost_date.insert(0, values[2])
+    #     d_date.insert(0, values[3])
+
+    
+    # def update_record():
+
+    #     def sqDeleteFoster(ftuple):
+    #         cur.execute("DELETE FROM FOSTER WHERE AN_ID=? AND CUST_ID=? AND FOST_DATE=? AND DUE_DATE=?;",(ftuple[0], ftuple[1], ftuple[2], ftuple[3]))
+    #         con.commit()
+
+    #     def sqInsertFoster(an_id,cust_id,fost_date,due_date):
+    #         cur.execute("INSERT INTO Foster VALUES(?,?,?,?);",(an_id,cust_id,fost_date,due_date))
+    #         con.commit()
+
+    #     # Grab record number
+    #     selected = tree.focus()
+    #     # Grab record values
+    #     values = tree.item(selected, 'values')
+        
+    #     try:
+    #         tree.item(selected, text="", values=(an_id.get(), cust_id.get(), fost_date.get(), d_date.get()))
+    #         sqDeleteFoster(values)
+    #         values = tree.item(selected, 'values')
+    #         sqInsertFoster(an_id.get(), cust_id.get(), fost_date.get(), d_date.get())
+            
+
+    #         # Clear entry boxes
+    #         an_id.delete(0, END)
+    #         cust_id.delete(0, END)
+    #         fost_date.delete(0, END)
+    #         d_date.delete(0, END)
+
+    #     except:
+    #         messagebox.showerror("Error", "Something went wrong", parent=root_new)
+
+        
+    # button_frame = LabelFrame(root_new, bg = "orange", text = "Commands")
+    # button_frame.pack(fill= "x", expand = "yes", padx = 20)
+
+    # #add new record
+    # add_button = Button(button_frame, text="Add Record", command=add_record)
+    # add_button.grid(row=0, column=0, padx=140, pady=10)
+
+    # #select record to edit
+    # edit_button = Button(button_frame, text="Edit Record", command=edit_record)
+    # edit_button.grid(row=0, column=1, padx=140, pady=10)
+
+    # #update selected
+    # update_button = Button(button_frame, text="Save Record", command=update_record)
+    # update_button.grid(row=0, column=2, padx=140, pady=10)
+
+    # # Remove Selected
+    # remove_one = Button(button_frame, text="Remove Selected Record", command=remove_record)
+    # remove_one.grid(row=0, column=3, padx=140, pady=10)
+
+    # add_button.config(font=('Times New Roman',13))
+    # edit_button.config(font=('Times New Roman',13))
+    # update_button.config(font=('Times New Roman',13))
+    # remove_one.config(font=('Times New Roman',13))
+
+    root_new.mainloop()

@@ -565,7 +565,7 @@ def viewDetails():
     records = cur.execute("SELECT * FROM DETAILS;")
 
     tree = ttk.Treeview(root_new)
-    tree["columns"]=("cust_id", "cust_name", "phone", "address", "an_id", "an_name", "breed", "species", "ad_date")
+    tree["columns"]=("an_id", "an_name", "breed", "species","cust_id", "cust_name", "phone", "address",  "ad_date")
     tree['show'] =  'headings'
 
     my_menu = Menu(root_new)
@@ -610,8 +610,8 @@ def viewDetails():
 
     tree.heading("an_id", text="Animal ID", anchor=CENTER)
     tree.heading("an_name", text="Name", anchor=CENTER)
-    tree.heading("breed", text="Phone", anchor=CENTER)
-    tree.heading("species", text="Address", anchor=CENTER)
+    tree.heading("breed", text="Breed", anchor=CENTER)
+    tree.heading("species", text="Species", anchor=CENTER)
     tree.heading("cust_id", text="Customer Id", anchor=CENTER)
     tree.heading("cust_name", text="Name", anchor=CENTER)
     tree.heading("phone", text="Phone", anchor=CENTER)

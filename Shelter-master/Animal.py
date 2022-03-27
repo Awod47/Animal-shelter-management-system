@@ -635,7 +635,7 @@ def ReturnAnimal():
                 else:
                     status = False
             else:
-                messagebox.showinfo("Error","Animal ID not present")
+                messagebox.showinfo("Error","Animal ID not present", parent = root)
         except:
             messagebox.showinfo("Error","Can't fetch Animal IDs")
         
